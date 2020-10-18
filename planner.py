@@ -93,7 +93,7 @@ class Mapper:
         self.waypoint_cost = 0
         self.cur_waypoint = None
         self.select_waypoint()
-        self.price = self.calc_price()
+        self.sell_price = max(0, self.cur_cost - self.waypoint_cost)
 
         ####################################################################
 
@@ -304,10 +304,6 @@ class Mapper:
                         best_waypoint = (i,j)
                         min_cost = cost
                         self.waypoint_cost = cost
-
-    def calc_price():
-        #select price depending on potential cost savings
-        pass
 
     def process_depth_image(self, data):
         """
