@@ -18,18 +18,18 @@ class TreeNode:
 class Environment:
 
     def __init__(self, bot_pos, grid_size):
-        print(bot_pos)
         self.bot_pos = bot_pos
         self.sz = grid_size
         self.root = TreeNode(None, [bot_pos])
-        self.leaf = TreeNode([], None)
+        self.leaf = TreeNode([], [bot_pos])
         self.level = [self.root]
         self.occupancy_grid = np.random.randint(0, high=2, size=(grid_size, grid_size))
         self.occupancy_grid[bot_pos] = 0
-        print(self.occupancy_grid)
+        print("Occupancy: \n", self.occupancy_grid)
 
     def build_tree(self):
         while self.level:
+            # print("Level length: ", len(self.level))
             new_level = []
             found = False
             for n in self.level:
@@ -49,16 +49,15 @@ class Environment:
             else:
                 self.level = new_level
 
-    def assign_J(self):
+    def assign_costs(self):
         cur_level = set(self.level)
-        print(len(cur_level))
+        # print("Cur level: ", len(cur_level))
         while cur_level:
             new_level = []
             for n in cur_level:
                 start = n.pos_seq[-1]
                 n.cost = math.inf
                 for d in n.children:
-                    print(d.pos_seq)
                     dest = d.pos_seq[-1]
                     cost = self.calc_cost(start, dest)
                     if cost < n.cost:
@@ -93,6 +92,6 @@ if __name__ == "__main__":
     init_pos = (2,2)
     env = Environment(init_pos, 3)
     env.build_tree()
-    env.assign_J()
+    env.assign_costs()
     print(env.get_best_pos_seq())
     
