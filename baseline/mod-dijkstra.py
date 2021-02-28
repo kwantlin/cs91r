@@ -195,7 +195,7 @@ class PathFinder:
 
 
 		# print the constructed distance array 
-		# print(dist)
+		print(dist)
 
 		# self.printSolution(src,dist,parent)
 		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]][3], dist[dest[0]][dest[1]][1]
@@ -342,14 +342,26 @@ class PathFinder:
 		
 
 if __name__ == "__main__":
-	grid = [[0,0,0,0,0.5],
-			[0,0.5,0,1,1],
-			[0,1,0,0,1],
-			[0,1,1,0.5,1],
-			[0,0,0,0,0]]
-	env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (2,2)], [(4,4), (2,3)], [10,10])
-	g= PathFinder(env) 
-	g.iterate()
+	# grid = [[0,0,0,0,0.5],
+	# 		[0,0.5,0,1,1],
+	# 		[0,1,0,0,1],
+	# 		[0,1,1,0.5,1],
+	# 		[0,0,0,0,0]]
+	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (2,2)], [(4,4), (2,3)], [10,10])
+	# g= PathFinder(env) 
+	# g.iterate()
+
+	grid = [[0,0,0],
+			[0,0.5,0],
+			[0,1,0]]
+	env = EnvGenerator(5,5,2,0.6,0.2,0.2,10, np.array(grid), [(2,0)], [(0,2)], [10])
+	g = PathFinder(env) 
+	print(g.grid)
+	# g.iterate()
+	# start = time.time()
+	print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+	# end = time.time()
+	# print(end-start)
 
 	# grid = [[random.uniform(0,1) for j in range(5)] for i in range(5)]
 	# print(grid)
