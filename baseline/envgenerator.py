@@ -14,11 +14,12 @@ class EnvGenerator:
         self.agents = []
         self.dests = []
         self.rewards = []
-        self.grid = grid
-        if self.grid is not None:
+        if grid is not None:
+            self.grid = grid
             self.agents = agents
             self.dests = dests
             self.rewards = rewards
+
 
     def getEnv(self):
         samples = random.sample(range(self.rows*self.cols), self.num_agents*2)
@@ -36,6 +37,10 @@ class EnvGenerator:
             grid[self.dests[i][0]][self.dests[i][1]] = 0
             self.rewards.append(random.randint(0, self.max_reward))
         self.grid = grid
+        print(self.grid)
+        print("Agents", self.agents)
+        print("Dests", self.dests)
+        print("Rewards", self.rewards)
 
 if __name__ == "__main__":
     myenv = EnvGenerator(5,5,3,0.6,0.2,0.2,10)

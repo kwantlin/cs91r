@@ -11,9 +11,9 @@ import random
 import matplotlib.pyplot as plt
 
 #Class to represent a graph 
-class PathFinder: 
+class IterativeAuction: 
 
-	def __init__(self, env):
+	def __init__(self, env, sellers=None, buyers=None):
 		self.grid = env.grid
 		self.rows = self.grid.shape[0]
 		self.cols = self.grid.shape[1]
@@ -28,6 +28,8 @@ class PathFinder:
 		self.utilities = []
 		self.surplus = []
 		self.assignments = defaultdict(list) # agent start pos: waypoint assigned
+		self.sellers = sellers
+		self.buyers = buyers
 
 	# A utility function to find the 
 	# vertex with minimum dist value, from 
@@ -211,8 +213,8 @@ class PathFinder:
 			value = self.waypointValues(self.grid,self.buyers[i],self.dests[i],self.rewards[i],self.utilities[i])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
-		print("From getallvalues", self.waypoints)
-		print("From getallvalues", self.values)
+		# print("From getallvalues", self.waypoints)
+		# print("From getallvalues", self.values)
 		self.waypt_prices = {}
 		for w in self.waypoints:
 			if self.values[w[0]][w[1]]>0:
@@ -220,23 +222,29 @@ class PathFinder:
 		self.waypoints = list(self.waypt_prices.keys())
 		
 
+	#TODO: optimal solution in separate file
+
 	def iterative_market_singlepairs(self, eta):
 		print("Prices", self.waypt_prices)
-		old_surplus = float("inf")
-		new_surplus = float("inf")
+		old_surplus = None
 		if self.waypoints == []:
 			return 
-		while new_surplus <= old_surplus:
+		iterations = 0
+		while True:
+			iterations += 1
+			print("assignments", self.assignments, "\n")
 			new_assignments = defaultdict(list)
 			supply = []
+			total_cost = 0
 			print("Sellers", self.sellers)
 			for a in self.sellers:
-				best_cost = float("inf")
+				best_profit = float("inf")
 				best_bundle = None
 				for i in range(len(self.waypoints)):
 					w = self.waypoints[i]
 					cost = self.waypointCost(self.grid,a,self.dests[self.agents.index(a)],[w],self.rewards[self.agents.index(a)],self.utilities[self.agents.index(a)])
-					if self.waypt_prices[w] > cost and cost < best_cost:
+					profit = self.values[w[0]][w[1]] - cost
+					if profit >= 0 and profit > best_profit: # TODO: fix this to be profit --> compare to optimal
 						best_cost = cost
 						best_bundle = [w]
 					for j in range(len(self.waypoints)):
@@ -246,13 +254,11 @@ class PathFinder:
 							if self.waypt_prices[w] + self.waypt_prices[w2] > cost and cost < best_cost:
 								best_cost = cost
 								best_bundle = [w, w2]
-				# print("Agent", a, "Cost", best_cost, "Bundle", best_bundle)
+				print("Agent", a, "Cost", best_cost, "Bundle", best_bundle)
 				if best_bundle is not None:
 					new_assignments[a] += best_bundle
 					supply += new_assignments[a]
-				print("assignments", self.assignments)
-				# time.sleep(5)
-			self.assignments = new_assignments
+					total_cost += best_cost
 			# print(self.waypoints)
 			print("Supply", supply)
 			intersect = list(set(self.waypoints).intersection(set(supply)))
@@ -261,13 +267,13 @@ class PathFinder:
 			surplus_pts = excess_demand + excess_supply
 			print("Surplus", surplus_pts)
 			surplus_value = 0
-			for p in surplus_pts:
-				surplus_value += self.waypt_prices[p]
+			for p in intersect:
+				surplus_value += self.values[p[0]][p[1]]
+			surplus_value -= total_cost
 			self.surplus.append(surplus_value)
-			if surplus_value == 0:
-				break
-			old_surplus = new_surplus
-			new_surplus = surplus_value
+			# if surplus_value == 0:
+			# 	break
+			print("Surplus Value", surplus_value)
 			update = False
 			for p in surplus_pts:
 				if p in excess_supply:
@@ -276,20 +282,30 @@ class PathFinder:
 						update = True
 						self.waypt_prices[p] = newprice
 				elif p in excess_demand:
-					newprice = max(self.values[p[0]][p[1]], self.values[p[0]][p[1]] + (eta * (self.values[p[0]][p[1]] -self.waypt_prices[p])))
+					newprice = min(self.values[p[0]][p[1]], self.waypt_prices[p] + (eta * (self.values[p[0]][p[1]] -self.waypt_prices[p])))
 					if newprice != self.waypt_prices[p]:
 						update = True
 						self.waypt_prices[p] = newprice
-			print("Updated prices", self.waypt_prices, "\n")
+			print("Updated prices", self.waypt_prices)
 			if not update:
+				print("Price no longer updating.")
+				self.assignments = new_assignments
 				break
+			if old_surplus is None or surplus_value >= old_surplus or surplus_value <= 0:
+				old_surplus = surplus_value
+				self.assignments = new_assignments
+			else:
+				break
+		if old_surplus < 0:
+			self.assignments = defaultdict(list)
 		print("Final Assignment", self.assignments)
-		
+		print("Iterations", iterations)
 
 	def iterate(self, market_type=None):
 		start = time.time()
 		self.getAllPaths()
-		self.random_buyer_seller()
+		if self.sellers is None:
+			self.random_buyer_seller()
 		self.getAllValues()
 		# print("Paths: ", np.array(self.paths))
 		# print("Values: ", self.values)
@@ -312,13 +328,21 @@ class PathFinder:
 		
 
 if __name__ == "__main__":
-	grid = [[0,0,0,0,0.5],
-			[0,0.5,0,1,1],
-			[0,1,0,0,1],
-			[0,1,1,0.5,1],
-			[0,0,0,0,0]]
-	env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (2,2), (4,3)], [(4,4), (2,3), (4,2)], [10,10,10])
-	g= PathFinder(env) 
+	# grid = [[0,0,0,0,0.5],
+	# 		[0,0,0,1,1],
+	# 		[0,1,0.5,0,1],
+	# 		[0,1,1,0.5,1],
+	# 		[0,0,0,0,0]]
+	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (1,1), (4,3)], [(4,4), (2,3), (4,2)], [10,10,10])
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10)
+	# env.getEnv()
+	grid = [[0.,  0.,  0.,  0.,  0. ],
+ 			[0.,  0.5, 0.,  0.,  0. ],
+ 			[0.,  0.,  1.,  1.,  0. ],
+ 			[0.,  0.5, 0.,  0.,  0.5],
+ 			[0.,  0.,  0.,  0.,  0. ]]
+	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
+	g= IterativeAuction(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
 	g.iterate("iterative-single-pair")
 
