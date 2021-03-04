@@ -9,8 +9,10 @@ import time
 from collections import defaultdict
 import random
 import matplotlib.pyplot as plt
+import math
 
 #Class to represent a graph 
+iters = 0
 class IterativeAuction: 
 
 	def __init__(self, env, sellers=None, buyers=None):
@@ -45,6 +47,18 @@ class IterativeAuction:
 				max_index = (i,j)
 
 		return max_index 
+
+	def minDistance(self,dist,queue): 
+		# Initialize min value and min_index as -1 
+		minimum = float("Inf") 
+		min_index = -1
+
+		for (i,j) in queue:
+			if dist[i][j][0] <= minimum:
+				minimum = dist[i][j][0] 
+				min_index = (i,j)
+
+		return min_index 
 
 
 	# Function to print shortest path 
@@ -109,8 +123,7 @@ class IterativeAuction:
 			if pt[0] >= 0 and pt[1] >= 0 and pt[0] <= self.rows-1 and pt[1] <= self.cols-1:
 				ptlist.append(pt)
 		return list(set(ptlist))
-
-
+	
 	def dijkstra(self, grid, src, dest, reward, start_prob=1): 
 
 		row = self.rows
@@ -131,24 +144,35 @@ class IterativeAuction:
 		# Add all vertices in queue 
 		queue = [src] 
 		while queue:  
-			u = queue.pop(0)
+			u = self.maxDistance(dist,queue) 
+			# print(queue)
+			# print(u)
+			# remove min element	 
+			queue.remove(u) 
+			# print(u)
 			for p in self.get_adjacent(u): 
 				'''Update p only if it is in queue, there is 
 				an edge from u to p (already guaranteed via for loop), and total weight of path from 
 				src to p through u is smaller than current value of 
 				dist[p[0]][p[1]]'''
+				r = 0
+				if p == dest:
+					r = reward -(dist[u[0]][u[1]][2]+1)
 				if grid[p[0]][p[1]] == 1:
 					dist[p[0]][p[1]] = [1,0,1,-float("inf")]
-				elif -(dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)) + dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(reward-(dist[u[0]][u[1]][2]+1)) > dist[p[0]][p[1]][3]: 
+
+				elif -(dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)) + dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(r) > dist[p[0]][p[1]][3]: 
 					cost = dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)
-					prob = dist[p[0]][p[1]][1] * (1-grid[p[0]][p[1]])
+					prob = dist[u[0]][u[1]][1] * (1-grid[p[0]][p[1]])
 					steps = dist[u[0]][u[1]][2]+1
-					expected_payoff = dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(reward-(dist[u[0]][u[1]][2]+1))
+					expected_payoff = dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(r)
 					
 					utility = expected_payoff - cost
 					dist[p[0]][p[1]] = (cost, prob, steps, utility)
 					parent[p[0]][p[1]] = u 
 					queue.append(p)
+
+			# print(*dist, "\n", sep = "\n")
 		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]][3], dist[dest[0]][dest[1]][1]
 
 	def getAllPaths(self):
@@ -167,6 +191,10 @@ class IterativeAuction:
 
 					grid[i][j] = 0
 					path, free_u, prob = self.dijkstra(grid, src, dest, reward)
+					# print("Src", src)
+					# print("Dest", dest)
+					# print("Reward", reward)
+					# print("Waypoint:", (i,j))
 					# print("Free Path: ", path)
 					# print("Free U: ", free_u)
 					grid[i][j] = 1
@@ -186,15 +214,30 @@ class IterativeAuction:
 	def waypointCost(self, grid, src, dest, waypts, reward, base_u):
 		help_u = 0
 		cum_prob = 1
+		cum_path = []
 		for w in waypts:
 			path1, utility, prob = self.dijkstra(grid,src,w,0, cum_prob)
 			help_u += utility
+			cum_path += path1
 			cum_prob *= prob
 
 		path, final_u, prob = self.dijkstra(grid,waypts[-1],dest,reward, cum_prob)
+		cum_path += path
 		help_u += final_u
 		cost = base_u - help_u
 		# print("Cost: ", cost)
+		# if cost < 0:
+		# 	print(self.grid)
+		# 	print("Source:", src)
+		# 	print("Dest:", dest)
+		# 	print("Waypts", waypts)
+		# 	print("Reward:", reward)
+		# 	print("Base Path", self.paths[self.agents.index(src)])
+		# 	print("Base U:", base_u)
+		# 	print("Help path", cum_path)
+		# 	print("Help_U", help_u)
+		# 	print("Cost", cost)
+		# 	raise Exception("Negative Cost!")
 		return cost
 
 
@@ -210,7 +253,8 @@ class IterativeAuction:
 	def getAllValues(self):
 		self.waypoints = []
 		for i in range(len(self.buyers)):
-			value = self.waypointValues(self.grid,self.buyers[i],self.dests[i],self.rewards[i],self.utilities[i])
+			print("Buyer:", self.buyers[i])
+			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
 		# print("From getallvalues", self.waypoints)
@@ -222,7 +266,7 @@ class IterativeAuction:
 		self.waypoints = list(self.waypt_prices.keys())
 		
 
-	#TODO: optimal solution in separate file
+	#TODO: remove unnecessary recomputation of cost
 
 	def iterative_market_singlepairs(self, eta):
 		print("Prices", self.waypt_prices)
@@ -237,27 +281,31 @@ class IterativeAuction:
 			supply = []
 			total_cost = 0
 			print("Sellers", self.sellers)
-			for a in self.sellers:
-				best_profit = float("inf")
+			for a in range(len(self.sellers)):
+				best_profit = -float("Inf")
+				best_cost = float("Inf")
 				best_bundle = None
 				for i in range(len(self.waypoints)):
 					w = self.waypoints[i]
-					cost = self.waypointCost(self.grid,a,self.dests[self.agents.index(a)],[w],self.rewards[self.agents.index(a)],self.utilities[self.agents.index(a)])
-					profit = self.values[w[0]][w[1]] - cost
+					cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+					profit = self.waypt_prices[w] - cost
 					if profit >= 0 and profit > best_profit: # TODO: fix this to be profit --> compare to optimal
+						best_profit = profit
 						best_cost = cost
 						best_bundle = [w]
 					for j in range(len(self.waypoints)):
 						if j != i:
 							w2 = self.waypoints[j]
-							cost = self.waypointCost(self.grid,a,self.dests[self.agents.index(a)],[w, w2],self.rewards[self.agents.index(a)],self.utilities[self.agents.index(a)])
-							if self.waypt_prices[w] + self.waypt_prices[w2] > cost and cost < best_cost:
+							cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w, w2],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+							profit = self.waypt_prices[w] + self.waypt_prices[w2] - cost
+							if profit >= 0 and profit > best_profit:
+								best_profit = profit
 								best_cost = cost
 								best_bundle = [w, w2]
-				print("Agent", a, "Cost", best_cost, "Bundle", best_bundle)
+				print("Agent", self.sellers[a], "Cost", best_cost, "Bundle", best_bundle)
 				if best_bundle is not None:
-					new_assignments[a] += best_bundle
-					supply += new_assignments[a]
+					new_assignments[self.sellers[a]] += best_bundle
+					supply += new_assignments[self.sellers[a]]
 					total_cost += best_cost
 			# print(self.waypoints)
 			print("Supply", supply)
@@ -265,7 +313,8 @@ class IterativeAuction:
 			excess_demand = list((Counter(self.waypoints) - Counter(intersect)).elements())
 			excess_supply = list((Counter(supply) - Counter(intersect)).elements())
 			surplus_pts = excess_demand + excess_supply
-			print("Surplus", surplus_pts)
+			print("Excess Demand", excess_demand)
+			print("Excess Supply", excess_supply)
 			surplus_value = 0
 			for p in intersect:
 				surplus_value += self.values[p[0]][p[1]]
@@ -287,23 +336,27 @@ class IterativeAuction:
 						update = True
 						self.waypt_prices[p] = newprice
 			print("Updated prices", self.waypt_prices)
-			if not update:
+			if not update: #TODO: keep track of size of largest update; if this falls below a certain threshold, break.
 				print("Price no longer updating.")
 				self.assignments = new_assignments
 				break
-			if old_surplus is None or surplus_value >= old_surplus or surplus_value <= 0:
+			if old_surplus is None or surplus_value >= old_surplus or surplus_value < 0:
 				old_surplus = surplus_value
 				self.assignments = new_assignments
 			else:
 				break
-		if old_surplus < 0:
+		if old_surplus is not None and old_surplus < 0:
 			self.assignments = defaultdict(list)
 		print("Final Assignment", self.assignments)
+		iters = iterations
 		print("Iterations", iterations)
 
-	def iterate(self, market_type=None):
+	def iterate(self):
 		start = time.time()
 		self.getAllPaths()
+		print("Utilities:", self.utilities)
+		for i in range(len(self.agents)):
+			print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
 		if self.sellers is None:
 			self.random_buyer_seller()
 		self.getAllValues()
@@ -312,9 +365,10 @@ class IterativeAuction:
 		# print("Costs: ", self.costs)
 		# print("Waypoints: ", self.waypoints)
 		self.iterative_market_singlepairs(0.5)
-		# print("Assignments: ", self.assignments)
+		print("Assignments: ", self.assignments)
 		end = time.time()
 		print("Elapsed time: ", end-start)
+		return self.assignments
 
 	def visualize_surplus(self):
 		iterations = list(range(1,len(self.surplus)+1))
@@ -336,15 +390,27 @@ if __name__ == "__main__":
 	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (1,1), (4,3)], [(4,4), (2,3), (4,2)], [10,10,10])
 	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10)
 	# env.getEnv()
-	grid = [[0.,  0.,  0.,  0.,  0. ],
- 			[0.,  0.5, 0.,  0.,  0. ],
- 			[0.,  0.,  1.,  1.,  0. ],
- 			[0.,  0.5, 0.,  0.,  0.5],
- 			[0.,  0.,  0.,  0.,  0. ]]
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
-	g= IterativeAuction(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
+	# grid = [[0.,  0.,  0.,  0.,  0. ],
+ 	# 		[0.,  0.5, 0.,  0.,  0. ],
+ 	# 		[0.,  0.,  1.,  1.,  0. ],
+ 	# 		[0.,  0.5, 0.,  0.,  0.5],
+ 	# 		[0.,  0.,  0.,  0.,  0. ]]
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
+	# g= IterativeAuction(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
-	g.iterate("iterative-single-pair")
+	# g.iterate()
+
+	# grid = [[0.5, 0.,  0.,  0.,  1. ],
+ 	# 		[0.5, 0.,  0.,  0.,  0. ],
+ 	# 		[1.,  0.,  0.,  0.,  1. ],
+ 	# 		[0.,  0.,  0.5, 0.5, 0. ],
+ 	# 		[0.,  0.,  0.,  0.,  0. ]]
+
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(2, 1), (2, 3), (3, 0), (4, 1)], [(1, 4), (1, 2), (0, 1), (1, 3)], [2, 3, 10, 9])
+	# g= IterativeAuction(env, [(3, 0), (4, 1), (2, 1)], [(2, 3)]) 
+	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+	# g.iterate()
+
 
 	# grid = [[0,0,0],
 	# 		[0,0.5,0],
@@ -355,6 +421,22 @@ if __name__ == "__main__":
 	# g.iterate()
 	# start = time.time()
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+
+	#Test Dijkstra
+	# grid = [[1.,  0.5, 0.,  1.,  1. ],
+ 	# 		[0.5, 0.5, 1.,  1.,  0. ],
+ 	# 		[0.,  0.5, 0.,  1.,  0.5],
+ 	# 		[1.,  0.,  0.,  0.5, 0.5],
+ 	# 		[1.,  0.,  1.,  0.5, 0. ]]
+	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10, np.array(grid), [(3,1)], [(1,4)], [0])
+	# g = IterativeAuction(env)
+	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+
+	while iters < 2:
+		env = EnvGenerator(8,8,4,0,0.6,0.4,10)
+		env.getEnv()
+		g = IterativeAuction(env) 
+		g.iterate()
 
 # This code is inspired by Neelam Yadav's contribution.
 
