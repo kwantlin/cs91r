@@ -10,6 +10,9 @@ from collections import defaultdict
 import random
 import matplotlib.pyplot as plt
 import math
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
 
 #Class to represent a graph 
 iters = 0
@@ -124,7 +127,7 @@ class IterativeAuction:
 				ptlist.append(pt)
 		return list(set(ptlist))
 
-	def dijkstra(self, grid, src, dest, reward, start_prob=0, start_steps=0): 
+	def find_path(self, grid, src, dest, reward, thresh_free=0.2, thresh_free=0.8): 
 		# print(*grid, "\n", sep = "\n")
 		row = self.rows
 		col = self.cols
