@@ -131,25 +131,75 @@ class OptimalBaseline:
 	
 		# Add all vertices in queue 
 		queue = [src] 
-		while queue:  
-			u = queue.pop(0)
+		# for t in list(itertools.product([i for i in range(dim)], repeat=2)): 
+		# 	queue.append(t) 
+			
+		#Find shortest path for all vertices 
+		while queue: 
+			# Pick the minimum dist vertex 
+			# from the set of vertices 
+			# still in queue 
+			u = self.maxDistance(dist,queue) 
+			# print(queue)
+			# print(u)
+			# remove min element	 
+			queue.remove(u) 
+
+			# Update dist value and parent 
+			# index of the adjacent vertices of 
+			# the picked vertex. Consider only 
+			# those vertices which are still in 
+			# queue 
+			# print(self.get_adjacent(dim, u))
 			for p in self.get_adjacent(u): 
 				'''Update p only if it is in queue, there is 
 				an edge from u to p (already guaranteed via for loop), and total weight of path from 
 				src to p through u is smaller than current value of 
 				dist[p[0]][p[1]]'''
+				# print(dist[p[0]][p[1]][0])
+				# print(dist[u[0]][u[1]][0])
+				# print(dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1))
+				# print(dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1))
+				# print(dist[u[0]][u[1]][3])
 				if grid[p[0]][p[1]] == 1:
 					dist[p[0]][p[1]] = [1,0,1,-float("inf")]
 				elif -(dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)) + dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(reward-(dist[u[0]][u[1]][2]+1)) > dist[p[0]][p[1]][3]: 
+					# print(-(dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)) + dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(reward-dist[u[0]][u[1]][2]+1))
 					cost = dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)
-					prob = dist[p[0]][p[1]][1] * (1-grid[p[0]][p[1]])
+					# print("Cost: ", cost)
+					prob = dist[u[0]][u[1]][1] * (1-grid[p[0]][p[1]])
+					# print("Prob: ", prob)
 					steps = dist[u[0]][u[1]][2]+1
+					# print("Steps: ", steps)
 					expected_payoff = dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*(reward-(dist[u[0]][u[1]][2]+1))
 					
 					utility = expected_payoff - cost
+					# print("Utility: ", utility)
 					dist[p[0]][p[1]] = (cost, prob, steps, utility)
 					parent[p[0]][p[1]] = u 
 					queue.append(p)
+					# print(u)
+					# print(p, "\n")
+					# print(dist, "\n")
+
+				# if p in queue: 
+				# 	print(dist[u[0]][u[1]][0])
+				# 	print(dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1))
+				# 	print(dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*dest_reward)
+				# 	print()
+				# 	if dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1) + dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*dest_reward> dist[p[0]][p[1]][0]: 
+				# 		cost = dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)
+				# 		prob = dist[p[0]][p[1]][1] * (1-grid[p[0]][p[1]])
+				# 		steps = dist[u[0]][u[1]][2]+1
+				# 		dist[p[0]][p[1]] = (cost, prob, steps)
+				# 		parent[p[0]][p[1]] = u 
+
+			# print(*dist, sep="\n")
+			# print()
+		# print the constructed distance array 
+		# print(dist)
+
+		# self.printSolution(src,dist,parent)
 		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]][3], dist[dest[0]][dest[1]][1]
 
 	def getAllPaths(self):
@@ -284,6 +334,7 @@ class OptimalBaseline:
 					self.assignments[self.sellers[i]].append((w[0], w[1]))
 					self.assignments[self.sellers[i]].append((w[2], w[3]))
 		print("Best Profit", best_profit)
+		#TODO: ensure the costs, etc. reported match what iterauc gives
 
 
 

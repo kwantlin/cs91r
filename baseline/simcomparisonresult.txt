@@ -1,0 +1,76 @@
+[[0.  0.5 0.  0.  0. ]
+ [0.  0.  1.  0.  1. ]
+ [0.  0.  0.  0.  0. ]
+ [1.  0.5 0.  0.  0. ]
+ [0.  1.  0.  1.  0. ]]
+Agents [(2, 4), (3, 2), (2, 0), (2, 3)]
+Dests [(4, 0), (0, 2), (4, 2), (3, 4)]
+Rewards [25, 25, 25, 25]
+Utilities: [9.0, 22.0, 22.0, 24.0]
+Agent: (2, 4) Base Path: [(3, 3), (4, 2), (3, 1), (4, 0)] Base Utility: 9.0
+Agent: (3, 2) Base Path: [(2, 2), (1, 1), (0, 2)] Base Utility: 22.0
+Agent: (2, 0) Base Path: [(2, 1), (3, 2), (4, 2)] Base Utility: 22.0
+Agent: (2, 3) Base Path: [(3, 4)] Base Utility: 24.0
+Buyers [(2, 0), (2, 3)] Sellers [(3, 2), (2, 4)]
+
+Buyer: (2, 0)
+Potential Waypoint: (0, 1)
+Src (2, 0)
+Free Path:  [(2, 1), (3, 2), (4, 2)]
+Free U:  22.0
+Blocked Path:  [(2, 1), (3, 2), (4, 2)]
+Blocked U:  22.0
+Value of (0, 1) is 0.0
+Potential Waypoint: (3, 1)
+Src (2, 0)
+Free Path:  [(3, 1), (4, 2)]
+Free U:  23.0
+Blocked Path:  [(2, 1), (3, 2), (4, 2)]
+Blocked U:  22.0
+Value of (3, 1) is 0.5
+
+Buyer: (2, 3)
+Potential Waypoint: (0, 1)
+Src (2, 3)
+Free Path:  [(3, 4)]
+Free U:  24.0
+Blocked Path:  [(3, 4)]
+Blocked U:  24.0
+Value of (0, 1) is 0.0
+Potential Waypoint: (3, 1)
+Src (2, 3)
+Free Path:  [(3, 4)]
+Free U:  24.0
+Blocked Path:  [(3, 4)]
+Blocked U:  24.0
+Value of (3, 1) is 0.0
+Prices {(3, 1): 0.5}
+assignments defaultdict(<class 'list'>, {}) 
+
+Sellers [(3, 2), (2, 4)]
+Waypoints: [(3, 1)]
+Path through waypoints [(3, 1), (2, 2), (1, 1), (0, 2)]
+Utility of path through waypoints: 10.0
+Seller (3, 2) Waypoint (3, 1) Profit -11.5
+Seller (3, 2) Waypoint (3, 1) Profit -11.5
+Agent (3, 2) Cost inf Bundle None
+Waypoints: [(3, 1)]
+Path through waypoints [(3, 3), (4, 2), (3, 1), (4, 0)]
+Utility of path through waypoints: 9.0
+Seller (2, 4) Waypoint (3, 1) Profit 0.5
+Seller (2, 4) Waypoint (3, 1) Profit 0.5
+Agent (2, 4) Cost 0.0 Bundle [(3, 1)]
+Supply [(3, 1)]
+Excess Demand []
+Excess Supply []
+Surplus Value 0.5
+Updated prices {(3, 1): 0.5}
+Price no longer updating.
+Final Assignment defaultdict(<class 'list'>, {(2, 4): [(3, 1)]})
+Iterations 1
+Assignments:  defaultdict(<class 'list'>, {(2, 4): [(3, 1)]})
+Elapsed time:  0.011417150497436523
+
+Best Profit 2.5
+Assignments:  defaultdict(<class 'list'>, {(3, 2): [(3, 1)]})
+Elapsed time:  0.010416984558105469

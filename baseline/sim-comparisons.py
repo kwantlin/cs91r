@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 def run_comp():
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10)
+	env = EnvGenerator(5,5,4,0.6,0.2,0.2,25)
 	env.getEnv()
 	iter_auc = IterativeAuction(env) 
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
@@ -27,6 +27,14 @@ def run_comp():
 	opt_assignment = opt_assign.iterate()
 
 	if auc_assignment != opt_assignment:
+		print(iter_auc.grid)
+		print("Agents:", iter_auc.agents)
+		print("Dests:", iter_auc.dests)
+		print("Rewards:", iter_auc.rewards)
+		for i in range(len(iter_auc.agents)):
+			print("Agent:", iter_auc.agents[i], "Base Path:", iter_auc.paths[i], "Base Utility:", iter_auc.utilities[i])
+		print("Buyers:", iter_auc.buyers)
+		print("Sellers:", iter_auc.sellers)
 		raise Exception("Iterative Auction assignment not optimal!")
 	else:
 		print("Success!")
