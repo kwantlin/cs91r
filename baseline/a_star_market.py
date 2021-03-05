@@ -13,6 +13,7 @@ import math
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
+import sys
 
 #Class to represent a graph 
 iters = 0
@@ -30,163 +31,42 @@ class IterativeAuction:
 		self.costs = defaultdict(list)
 		self.waypoints = None
 		self.paths = []
-		self.utilities = []
+		self.costs = []
 		self.surplus = []
 		self.assignments = defaultdict(list) # agent start pos: waypoint assigned
 		self.sellers = sellers
 		self.buyers = buyers
 
-	# A utility function to find the 
-	# vertex with minimum dist value, from 
-	# the set of vertices still in queue 
-	def maxDistance(self,dist,queue): 
-		# Initialize min value and min_index as -1 
-		maximum = -float("Inf") 
-		max_index = -1
-
-		for (i,j) in queue:
-			if dist[i][j][3] >= maximum:
-				maximum = dist[i][j][3] 
-				max_index = (i,j)
-
-		return max_index 
-
-	def minDistance(self,dist,queue): 
-		# Initialize min value and min_index as -1 
-		minimum = float("Inf") 
-		min_index = -1
-
-		for (i,j) in queue:
-			if dist[i][j][0] <= minimum:
-				minimum = dist[i][j][0] 
-				min_index = (i,j)
-
-		return min_index 
-
-
-	# Function to print shortest path 
-	# from source to j 
-	# using child array 
-	def printPath(self, child, i,j): 
-		
-		#Base Case : If i,j is source 
-		if child[i][j] == (-1,-1): 
-			print((i,j))
-			return
-		self.printPath(child, child[i][j][0], child[i][j][1]) 
-		print((i,j))
-
-	def getPath(self, parent, i,j, src, path):
-		#Base Case : If i,j is source 
-		while (i,j) != src: 
-			if (i,j) in path:
-				return path[::-1]
-			# print((i,j))
-			path.append((i,j))
-			# print("New path", path)
-			i,j = parent[i][j][0], parent[i][j][1]
-		return path[::-1]
-
-	def checkPath(self, child, pt, src, waypt):
-		stack = [pt]
-		seen = set()
-		while stack:
-			cur_pt = stack.pop()
-			if cur_pt == waypt:
-				return True
-			elif cur_pt in seen:
-				continue
-			else:
-				seen.add(cur_pt)
-				stack += child[cur_pt[0]][cur_pt[1]]
-		return False
-
-	# A utility function to print 
-	# the constructed distance 
-	# array 
-	def printSolution(self, src, dist, child): 
-		print("Vertex \t\tDistance from Source\tPath") 
-		for i in range(len(dist)): 
-			for j in range(len(dist[i])):
-				print("\n (%d, %d) --> (%d, %d) \t\t%f \t\t\t\t\t" % (src[0], src[1], i,j, dist[i][j][3])), 
-				self.printPath(child,i,j) 
-				
-	def createPairs(self, adj_pts, cur_pt):
-		pairs = []
-		for i in adj_pts:
-			pairs.append([i, cur_pt])
-
-		return pairs
-
-	def get_adjacent(self, point):
-		x=point[0]
-		y=point[1]
-		ptlist = []
-		for pt in [(x-1,y), (x-1,y+1), (x, y+1), (x+1, y+1), (x+1, y), (x+1, y-1), (x, y-1), (x-1, y-1)]:
-			if pt[0] >= 0 and pt[1] >= 0 and pt[0] <= self.rows-1 and pt[1] <= self.cols-1:
-				ptlist.append(pt)
-		return list(set(ptlist))
-
-	def find_path(self, grid, src, dest, reward, thresh_free=0.2, thresh_free=0.8): 
+	def get_path(self, grid, src, dest, reward, thresh_free=0.3): 
 		# print(*grid, "\n", sep = "\n")
 		row = self.rows
 		col = self.cols
 
-		# The output array. dist[i][j] will hold 
-		# the shortest distance from src to (i.j)
-		# Initialize all distances as INFINITE 
-		dist = [[(float("inf"), start_prob, start_steps, -float("inf")) for i in range(col)] for i in range(row)]
+		matrix = grid.copy()
+		for i in range(row):
+			for j in range(col):
+				if grid[i][j] <= thresh_free: #if probability of being blocked is sufficiently low, mark cost to walk that cell to be 1
+					matrix[i][j] = 1
+				else: # everything else is considered in traversible
+					matrix[i][j] = 0
 
-		#Parent array to store 
-		# shortest path tree 
-		parent = [[(-1,-1) for i in range(col)] for i in range(row)]
+		grid = Grid(matrix=matrix)
+		start = grid.node(src[0], src[1])
+		end = grid.node(dest[0], dest[1])
 
-		# Cumulative cost of source vertex from itself is always 0 , prob success up till this point 1, and num steps 0, total U 0 (ignore this)
-		dist[src[0]][src[1]] = (0, start_prob, 0, reward)
-	
-		# Add all vertices in queue 
-		queue = [src] 
-		while queue:  
-			u = self.minDistance(dist,queue) 
-			# print(queue)
-			# print(u)
-			# remove min element	 
-			queue.remove(u) 
-			# print(u)
-			for p in self.get_adjacent(u): 
-				'''Update p only if it is in queue, there is 
-				an edge from u to p (already guaranteed via for loop), and total weight of path from 
-				src to p through u is smaller than current value of 
-				dist[p[0]][p[1]]'''
-
-				if grid[p[0]][p[1]] == 1:
-					dist[p[0]][p[1]] = [-float("inf"),0,1,-float("inf")]
-				else:
-					prob_free = 1-grid[p[0]][p[1]]
-					neg_log_prob = -math.log(prob_free)
-					# # print(prob_free)
-					# if prob_free < 1:
-					# 	log_prob = math.log(prob_free)
-					# else:
-					# 	log_prob = 0
-
-					if dist[u[0]][u[1]][2] + 1 + dist[u[0]][u[1]][1] + neg_log_prob < dist[p[0]][p[1]][0]: 
-						prob = dist[u[0]][u[1]][1] + neg_log_prob
-						steps = dist[u[0]][u[1]][2] + 1
-						cost = prob + steps
-						dist[p[0]][p[1]] = (cost, prob, steps, 0)
-						parent[p[0]][p[1]] = u 
-						queue.append(p)
-
-			# print(*dist, "\n", sep = "\n")
-		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]][0], dist[dest[0]][dest[1]][1], dist[dest[0]][dest[1]][1]
-
+		finder = AStarFinder(diagonal_movement=DiagonalMovement.always)
+		path, runs = finder.find_path(start, end, grid)
+		path_cost = len(path)-1
+		# print(path)
+		if path_cost == -1:
+			path_cost = sys.float_info.max
+		return path[1:], path_cost
 
 	def getAllPaths(self):
 		for i in range(len(self.agents)):
-			path, best_u, cum_prob, steps = self.dijkstra(self.grid,self.agents[i],self.dests[i],self.rewards[i]) 
+			path, cost = self.get_path(self.grid,self.agents[i],self.dests[i],self.rewards[i]) 
 			self.paths.append(path)
-			self.utilities.append(best_u)
+			self.costs.append(cost)
 
 	def waypointValues(self, grid, src, dest, reward, base_cost):
 		value = [[0 for j in range(self.cols)] for i in range(self.rows)]
@@ -197,21 +77,24 @@ class IterativeAuction:
 					prob_free = 1 - prob_blocked
 
 					grid[i][j] = 0
-					path, free_u, prob, steps = self.dijkstra(grid, src, dest, reward)
-					print("Agent:", src)
+					path, free_cost = self.get_path(grid, src, dest, reward)
+					# print("Agent:", src)
 					# print("Dest", dest)
 					# print("Reward", reward)
 					# print("Waypoint:", (i,j))
-					print("Free Path: ", path)
-					print("Free U: ", free_u)
+					# print("Free Path: ", path)
+					# print("Free U: ", free_cost)
 					grid[i][j] = 1
-					path, blocked_u, prob, steps = self.dijkstra(grid, src, dest, reward)
+					path, blocked_cost = self.get_path(grid, src, dest, reward)
 					# print("Blocked Path: ", path)
 					# print("Blocked U: ", blocked_u)
 
-					pt_val = prob_free * free_u + prob_blocked * blocked_u
+					pt_val = prob_free * free_cost + prob_blocked * blocked_cost
 
-					value[i][j] = max(base_cost - pt_val, 0)
+					new_val = max(base_cost - pt_val, 0)
+					new_val = min(new_val, self.rows*self.cols)
+					value[i][j] = new_val
+
 					if value[i][j] > 0:
 						self.waypoints.append((i,j))
 					grid[i][j] = prob_blocked
@@ -220,22 +103,20 @@ class IterativeAuction:
 
 	def waypointCost(self, grid, src, dest, waypts, reward, base_cost):
 		help_cost = 0
-		cum_prob = 0
-		cum_steps = 0
 		cum_path = []
 		for w in waypts:
-			path1, cost, prob, steps = self.dijkstra(grid,src,w,0, cum_prob, cum_steps)
+			path1, cost = self.get_path(grid,src,w,0)
+			if cost == sys.float_info.max:
+				return sys.float_info.max
 			help_cost += cost
 			cum_path += path1
-			cum_prob += prob
-			cum_steps = steps
 
-		path, final_cost, prob, steps = self.dijkstra(grid,waypts[-1],dest,reward, cum_prob, cum_steps)
+		path, final_cost = self.get_path(grid,waypts[-1],dest,reward,)
 		cum_path += path
 		help_cost += final_cost
 		cost_diff = help_cost - base_cost
 		# print("Cost: ", cost)
-		if cost_diff < 0 or cost_diff == float("Inf"):
+		if cost_diff < 0:
 			print(self.grid)
 			print("Source:", src)
 			print("Dest:", dest)
@@ -263,7 +144,7 @@ class IterativeAuction:
 		self.waypoints = []
 		for i in range(len(self.buyers)):
 			print("Buyer:", self.buyers[i])
-			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])])
+			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.costs[self.agents.index(self.buyers[i])])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
 		# print("From getallvalues", self.waypoints)
@@ -291,14 +172,14 @@ class IterativeAuction:
 			total_cost = 0
 			print("Sellers", self.sellers)
 			for a in range(len(self.sellers)):
-				best_profit = -float("Inf")
-				best_cost = float("Inf")
+				best_profit = sys.float_info.min
+				best_cost = sys.float_info.max
 				best_bundle = None
 				for i in range(len(self.waypoints)):
 					w = self.waypoints[i]
-					cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+					cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.costs[self.agents.index(self.sellers[a])])
 					profit = self.waypt_prices[w] - cost
-					print(profit)
+					# print(profit)
 					if profit >= 0 and profit > best_profit:
 						print("Update profit, cost, etc.")
 						best_profit = profit
@@ -307,7 +188,7 @@ class IterativeAuction:
 					for j in range(len(self.waypoints)):
 						if j != i:
 							w2 = self.waypoints[j]
-							cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w, w2],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+							cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w, w2],self.rewards[self.agents.index(self.sellers[a])],self.costs[self.agents.index(self.sellers[a])])
 							profit = self.waypt_prices[w] + self.waypt_prices[w2] - cost
 							if profit >= 0 and profit > best_profit:
 								best_profit = profit
@@ -366,9 +247,9 @@ class IterativeAuction:
 	def iterate(self):
 		start = time.time()
 		self.getAllPaths()
-		print("Utilities:", self.utilities)
+		print("Utilities:", self.costs)
 		for i in range(len(self.agents)):
-			print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
+			print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.costs[i])
 		if self.sellers is None:
 			self.random_buyer_seller()
 		self.getAllValues()
@@ -420,7 +301,7 @@ if __name__ == "__main__":
 
 	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(2, 1), (2, 3), (3, 0), (4, 1)], [(1, 4), (1, 2), (0, 1), (1, 3)], [2, 3, 10, 9])
 	# g= IterativeAuction(env, [(3, 0), (4, 1), (2, 1)], [(2, 3)]) 
-	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+	# print(g.get_path(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
 	# g.iterate()
 
 
@@ -444,16 +325,16 @@ if __name__ == "__main__":
 	# g = IterativeAuction(env)
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
 
-	while iters < 2:
-		env = EnvGenerator(10,10,5,0.4,0.4,0.2,10)
-		env.getEnv()
-		g = IterativeAuction(env) 
-		g.iterate()
+	# while iters < 2:
+	# 	env = EnvGenerator(10,10,5,0.4,0.4,0.2,10)
+	# 	env.getEnv()
+	# 	g = IterativeAuction(env) 
+	# 	g.iterate()
 
-	# env = EnvGenerator(8,8,4,0,0.6,0.4,10)
-	# env.getEnv()
-	# g = IterativeAuction(env) 
-	# g.iterate()
+	env = EnvGenerator(5,5,4,0,0.6,0.4,10)
+	env.getEnv(False)
+	g = IterativeAuction(env) 
+	g.iterate()
 
 # This code is inspired by Neelam Yadav's contribution.
 

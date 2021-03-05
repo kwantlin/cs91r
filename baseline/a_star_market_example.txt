@@ -1,0 +1,104 @@
+[[0.54326731 0.         1.         1.         0.74466264]
+ [0.         1.         0.76797766 0.         1.        ]
+ [0.         0.92359972 0.59138047 0.95822417 0.40806649]
+ [0.         0.67181444 0.29564953 0.         0.        ]
+ [0.03763721 0.         0.96636478 0.98511987 1.        ]]
+Agents [(3, 3), (3, 0), (3, 4), (1, 0)]
+Dests [(0, 1), (2, 0), (4, 1), (1, 3)]
+Rewards [7, 2, 0, 6]
+Utilities: [5, 1.7976931348623157e+308, 1.7976931348623157e+308, 1.7976931348623157e+308]
+Agent: (3, 3) Base Path: [(2, 3), (1, 4), (0, 3), (0, 2), (0, 1)] Base Utility: 5
+Agent: (3, 0) Base Path: [] Base Utility: 1.7976931348623157e+308
+Agent: (3, 4) Base Path: [] Base Utility: 1.7976931348623157e+308
+Agent: (1, 0) Base Path: [] Base Utility: 1.7976931348623157e+308
+Buyers [(3, 4)] Sellers [(3, 0), (1, 0), (3, 3)]
+Buyer: (3, 4)
+Prices {(0, 0): 25.0, (0, 4): 25.0, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+assignments defaultdict(<class 'list'>, {}) 
+
+Sellers [(3, 0), (1, 0), (3, 3)]
+Update profit, cost, etc.
+Agent (3, 0) Cost 0.0 Bundle [(3, 1)]
+Update profit, cost, etc.
+Agent (1, 0) Cost 0.0 Bundle [(0, 4)]
+Update profit, cost, etc.
+Agent (3, 3) Cost 1 Bundle [(0, 4)]
+Supply [(3, 1), (0, 4), (0, 4)]
+Excess Demand [(0, 0), (2, 2), (2, 4), (3, 2)]
+Excess Supply [(0, 4)]
+Surplus Value 49.0
+Updated prices {(0, 0): 25.0, (0, 4): 12.5, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+assignments defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)], (3, 3): [(0, 4)]}) 
+
+Sellers [(3, 0), (1, 0), (3, 3)]
+Update profit, cost, etc.
+Agent (3, 0) Cost 0.0 Bundle [(3, 1)]
+Update profit, cost, etc.
+Agent (1, 0) Cost 0.0 Bundle [(0, 4)]
+Update profit, cost, etc.
+Agent (3, 3) Cost 1 Bundle [(0, 4)]
+Supply [(3, 1), (0, 4), (0, 4)]
+Excess Demand [(0, 0), (2, 2), (2, 4), (3, 2)]
+Excess Supply [(0, 4)]
+Surplus Value 49.0
+Updated prices {(0, 0): 25.0, (0, 4): 6.25, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+assignments defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)], (3, 3): [(0, 4)]}) 
+
+Sellers [(3, 0), (1, 0), (3, 3)]
+Update profit, cost, etc.
+Agent (3, 0) Cost 0.0 Bundle [(3, 1)]
+Update profit, cost, etc.
+Agent (1, 0) Cost 0.0 Bundle [(0, 4)]
+Update profit, cost, etc.
+Agent (3, 3) Cost 1 Bundle [(0, 4)]
+Supply [(3, 1), (0, 4), (0, 4)]
+Excess Demand [(0, 0), (2, 2), (2, 4), (3, 2)]
+Excess Supply [(0, 4)]
+Surplus Value 49.0
+Updated prices {(0, 0): 25.0, (0, 4): 3.125, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+assignments defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)], (3, 3): [(0, 4)]}) 
+
+Sellers [(3, 0), (1, 0), (3, 3)]
+Update profit, cost, etc.
+Agent (3, 0) Cost 0.0 Bundle [(3, 1)]
+Update profit, cost, etc.
+Agent (1, 0) Cost 0.0 Bundle [(0, 4)]
+Update profit, cost, etc.
+Agent (3, 3) Cost 1 Bundle [(0, 4)]
+Supply [(3, 1), (0, 4), (0, 4)]
+Excess Demand [(0, 0), (2, 2), (2, 4), (3, 2)]
+Excess Supply [(0, 4)]
+Surplus Value 49.0
+Updated prices {(0, 0): 25.0, (0, 4): 1.5625, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+assignments defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)], (3, 3): [(0, 4)]}) 
+
+Sellers [(3, 0), (1, 0), (3, 3)]
+Update profit, cost, etc.
+Agent (3, 0) Cost 0.0 Bundle [(3, 1)]
+Update profit, cost, etc.
+Agent (1, 0) Cost 0.0 Bundle [(0, 4)]
+Update profit, cost, etc.
+Agent (3, 3) Cost 1 Bundle [(0, 4)]
+Supply [(3, 1), (0, 4), (0, 4)]
+Excess Demand [(0, 0), (2, 2), (2, 4), (3, 2)]
+Excess Supply [(0, 4)]
+Surplus Value 49.0
+Updated prices {(0, 0): 25.0, (0, 4): 0.78125, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+assignments defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)], (3, 3): [(0, 4)]}) 
+
+Sellers [(3, 0), (1, 0), (3, 3)]
+Update profit, cost, etc.
+Agent (3, 0) Cost 0.0 Bundle [(3, 1)]
+Update profit, cost, etc.
+Agent (1, 0) Cost 0.0 Bundle [(0, 4)]
+Agent (3, 3) Cost 1.7976931348623157e+308 Bundle None
+Supply [(3, 1), (0, 4)]
+Excess Demand [(0, 0), (2, 2), (2, 4), (3, 2)]
+Excess Supply []
+Surplus Value 50.0
+Updated prices {(0, 0): 25.0, (0, 4): 0.78125, (2, 2): 25.0, (2, 4): 25.0, (3, 1): 25.0, (3, 2): 25.0}
+Price no longer updating.
+Final Assignment defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)]})
+Iterations 6
+Assignments:  defaultdict(<class 'list'>, {(3, 0): [(3, 1)], (1, 0): [(0, 4)]})
+Elapsed time:  0.11498689651489258

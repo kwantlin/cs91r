@@ -1,5 +1,7 @@
 import random
 import numpy as np
+import random
+import sys
 
 class EnvGenerator:
 
@@ -21,7 +23,7 @@ class EnvGenerator:
             self.rewards = rewards
 
 
-    def getEnv(self):
+    def getEnv(self, pure_unknown=True):
         samples = random.sample(range(self.rows*self.cols), self.num_agents*2)
         for i in range(self.num_agents*2):
             r = samples[i] // self.cols
@@ -32,10 +34,19 @@ class EnvGenerator:
             else:
                 self.dests.append((r, c))
         grid = np.random.choice([0,0.5,1], (self.rows, self.cols), p=[self.free, self.unknown, self.blocked])
+        
         for i in range(self.num_agents):
             grid[self.agents[i][0]][self.agents[i][1]] = 0
             grid[self.dests[i][0]][self.dests[i][1]] = 0
-            self.rewards.append(random.randint(0, self.max_reward))
+            self.rewards.append(random.randint(self.rows*self.cols, self.max_reward))
+
+        if pure_unknown == False:
+            for i in range(len(grid)):
+                for j in range(len(grid[0])):
+                    if grid[i][j] > 0 and grid[i][j] < 1:
+                        grid[i][j] = random.uniform(0,1)
+                        while grid[i][j] == 0 or grid[i][j] == 1:
+                            grid[i][j] = random.uniform(0,1)
         self.grid = grid
         print(self.grid)
         print("Agents", self.agents)

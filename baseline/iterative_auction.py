@@ -443,7 +443,7 @@ if __name__ == "__main__":
 
 	while iters < 2:
 		env = EnvGenerator(10,10,5,0.4,0.4,0.2,10)
-		env.getEnv()
+		env.getEnv(False)
 		g = IterativeAuction(env) 
 		g.iterate()
 
