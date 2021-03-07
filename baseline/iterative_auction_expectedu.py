@@ -220,7 +220,23 @@ class IterativeAuction:
 			self.paths.append(path)
 			self.utilities.append(best_u)
 
-	def waypointValues(self, grid, src, dest, reward, base_u):
+	def fail_path_cost(self, grid, path, fail_pt):
+		expected_u = 0
+		cum_prob = 1
+		num_steps = 0
+		for p in path:
+			if grid[p[0]][p[1]] == 1: #blocked
+				expected_u += cum_prob * (num_steps + 1)
+			elif grid[p[0]][p[1]] < 1 and grid[p[0]][p[1]] > 0: #unknown
+				expected_u += cum_prob*grid[p[0]][p[1]]*(num_steps +1)
+				cum_prob *= (1-grid[p[0]][p[1]])
+				num_steps += 1
+			else: #free
+				num_steps += 1
+		return expected_u
+
+
+	def waypointValues(self, grid, src, dest, reward, base_u, base_path):
 		value = [[0 for j in range(self.cols)] for i in range(self.rows)]
 		for i in range(len(grid)):
 			for j in range(len(grid)):
@@ -231,20 +247,27 @@ class IterativeAuction:
 
 					grid[i][j] = 0
 					path, free_u, prob = self.dijkstra(grid, src, dest, reward)
+					free_diff = free_u - base_u
 					print("Src", src)
 					# print("Dest", dest)
 					# print("Reward", reward)
 					# print("Waypoint:", (i,j))
 					print("Free Path: ", path)
 					print("Free U: ", free_u)
+					print("Free Diff:", free_diff)
 					grid[i][j] = 1
-					path, blocked_u, prob = self.dijkstra(grid, src, dest, reward)
-					print("Blocked Path: ", path)
+					pathb, blocked_u, prob_b = self.dijkstra(grid, src, dest, reward)
+					blocked_diff = blocked_u - base_u
+					if (i,j) in base_path:
+						fail_cost = self.fail_path_cost(grid, base_path, (i,j))
+						blocked_diff = blocked_u - fail_cost
+					print("Blocked Path: ", pathb)
 					print("Blocked U: ", blocked_u)
+					print("Blocked Diff:", blocked_diff)
 
-					pt_val = prob_free * free_u + prob_blocked * blocked_u
+					pt_val = prob_free * free_diff + prob_blocked * blocked_diff
 
-					value[i][j] = max(pt_val - base_u, 0)
+					value[i][j] = max(pt_val, 0)
 					print("Value of", (i,j), "is", value[i][j])
 					if value[i][j] > 0:
 						self.waypoints.append((i,j))
@@ -299,7 +322,7 @@ class IterativeAuction:
 		for i in range(len(self.buyers)):
 			print()
 			print("Buyer:", self.buyers[i])
-			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])])
+			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])], self.paths[self.agents.index(self.buyers[i])])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
 		# print("From getallvalues", self.waypoints)
@@ -449,17 +472,17 @@ if __name__ == "__main__":
 	# g.iterate()
 
 	#Presentation Example
-	grid = [[0.5, 0.,  1.,  0.,  0. ],
-			[0.,  0.5, 1.,  0.,  0. ],
-			[0.5, 1.,  0.5, 0.,  0.5],
-			[0.5, 0.,  0.5, 0.,  0. ],
-			[1.,  0.,  0.,  0.,  0.5]]
+	# grid = [[0.5, 0.,  1.,  0.,  0. ],
+	# 		[0.,  0.5, 1.,  0.,  0. ],
+	# 		[0.5, 1.,  0.5, 0.,  0.5],
+	# 		[0.5, 0.,  0.5, 0.,  0. ],
+	# 		[1.,  0.,  0.,  0.,  0.5]]
 
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
-	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
-	print(g.agents[2])
-	# print(g.dijkstra(g.grid,g.agents[2],g.dests[2],g.rewards[2]))
-	g.iterate()
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
+	# g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	# print(g.agents[2])
+	# # print(g.dijkstra(g.grid,g.agents[2],g.dests[2],g.rewards[2]))
+	# g.iterate()
 
 
 	# grid = [[0,0,0],
@@ -483,7 +506,7 @@ if __name__ == "__main__":
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
 
 	while iters < 2:
-		env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
+		env = EnvGenerator(5,5,6,0.3,0.5,0.2,25)
 		env.getEnv()
 		g = IterativeAuction(env) 
 		g.iterate()
