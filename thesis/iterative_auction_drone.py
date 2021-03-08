@@ -9,10 +9,11 @@ import time
 from collections import defaultdict
 import random
 import matplotlib.pyplot as plt
-import itertools
+import math
 
 #Class to represent a graph 
-class OptimalBaseline: 
+iters = 0
+class IterativeAuction: 
 
 	def __init__(self, env, sellers=None, buyers=None):
 		self.grid = env.grid
@@ -46,6 +47,18 @@ class OptimalBaseline:
 				max_index = (i,j)
 
 		return max_index 
+
+	def minDistance(self,dist,queue): 
+		# Initialize min value and min_index as -1 
+		minimum = float("Inf") 
+		min_index = -1
+
+		for (i,j) in queue:
+			if dist[i][j] <= minimum:
+				minimum = dist[i][j] 
+				min_index = (i,j)
+
+		return min_index 
 
 
 	# Function to print shortest path 
@@ -110,8 +123,7 @@ class OptimalBaseline:
 			if pt[0] >= 0 and pt[1] >= 0 and pt[0] <= self.rows-1 and pt[1] <= self.cols-1:
 				ptlist.append(pt)
 		return list(set(ptlist))
-
-
+	
 	def dijkstra(self, grid, src, dest, reward, start_prob=1): 
 
 		row = self.rows
@@ -202,63 +214,107 @@ class OptimalBaseline:
 		# self.printSolution(src,dist,parent)
 		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]][3], dist[dest[0]][dest[1]][1]
 
+	def dijkstra_drone(self, grid, src, dest): 
+		row = self.rows
+		col = self.cols
+
+		dist = [[float("inf") for i in range(col)] for i in range(row)]
+
+		parent = [[(-1,-1) for i in range(col)] for i in range(row)]
+
+		# num steps 0, total cost 0
+		dist[src[0]][src[1]] = 0
+	
+		# Add all vertices in queue 
+		queue = [src] 
+		
+		#Find shortest path for all vertices 
+		while queue: 
+			u = self.minDistance(dist,queue) 
+			# print(queue)
+			# print(u)
+			# remove min element	 
+			queue.remove(u)
+
+			for p in self.get_adjacent(u): 
+				'''Update p only if it is in queue, there is 
+				an edge from u to p (already guaranteed via for loop), and total weight of path from 
+				src to p through u is smaller than current value of 
+				dist[p[0]][p[1]]'''
+				if grid[p[0]][p[1]] == 1:
+					dist[p[0]][p[1]] = float("inf")
+				elif dist[u[0]][u[1]] + 1 < dist[p[0]][p[1]]: 
+					dist[p[0]][p[1]] = dist[u[0]][u[1]] + 1
+					parent[p[0]][p[1]] = u 
+					queue.append(p)
+			# print(dist)
+		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]]
+
+
 	def getAllPaths(self):
-		for i in range(len(self.agents)):
-			path, best_u, cum_prob = self.dijkstra(self.grid,self.agents[i],self.dests[i],self.rewards[i]) 
+		for i in range(len(self.buyers)):
+			path, best_u, cum_prob = self.dijkstra(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])]) 
 			self.paths.append(path)
 			self.utilities.append(best_u)
 
-	def waypointValues(self, grid, src, dest, reward, base_u):
+	def fail_path_cost(self, grid, path, fail_pt):
+		expected_u = 0
+		cum_prob = 1
+		num_steps = 0
+		for p in path:
+			if grid[p[0]][p[1]] == 1: #blocked
+				expected_u += cum_prob * (num_steps + 1)
+			elif grid[p[0]][p[1]] < 1 and grid[p[0]][p[1]] > 0: #unknown
+				expected_u += cum_prob*grid[p[0]][p[1]]*(num_steps +1)
+				cum_prob *= (1-grid[p[0]][p[1]])
+				num_steps += 1
+			else: #free
+				num_steps += 1
+		return expected_u
+
+
+	def waypointValues(self, grid, src, dest, reward, base_u, base_path):
 		value = [[0 for j in range(self.cols)] for i in range(self.rows)]
 		for i in range(len(grid)):
 			for j in range(len(grid)):
 				if grid[i][j]>0 and grid[i][j]<1:
+					print("Potential Waypoint:", (i,j))
 					prob_blocked = grid[i][j]
 					prob_free = 1 - prob_blocked
 
 					grid[i][j] = 0
 					path, free_u, prob = self.dijkstra(grid, src, dest, reward)
-					# print("Free Path: ", path)
-					# print("Free U: ", free_u)
+					free_diff = free_u - base_u
+					print("Src", src)
+					# print("Dest", dest)
+					# print("Reward", reward)
+					# print("Waypoint:", (i,j))
+					print("Free Path: ", path)
+					print("Free U: ", free_u)
+					print("Free Diff:", free_diff)
 					grid[i][j] = 1
-					path, blocked_u, prob = self.dijkstra(grid, src, dest, reward)
-					# print("Blocked Path: ", path)
-					# print("Blocked U: ", blocked_u)
+					print("Base Path", base_path)
+					print((i,j) in base_path)
+					pathb, blocked_u, prob_b = self.dijkstra(grid, src, dest, reward)
+					blocked_diff = blocked_u - base_u
+					if (i,j) in base_path:
+						fail_cost = self.fail_path_cost(grid, base_path, (i,j))
+						print("failcost", fail_cost)
+						blocked_diff = blocked_u + fail_cost
+						print("new diff", blocked_diff)
+					print("Blocked Path: ", pathb)
+					print("Blocked U: ", blocked_u)
+					print("Blocked Diff:", blocked_diff)
 
-					pt_val = prob_free * free_u + prob_blocked * blocked_u
+					pt_val = prob_free * free_diff + prob_blocked * blocked_diff
 
-					value[i][j] = max(pt_val - base_u, 0)
+					value[i][j] = max(pt_val, 0)
+					print("Value of", (i,j), "is", value[i][j])
 					if value[i][j] > 0:
 						self.waypoints.append((i,j))
 					grid[i][j] = prob_blocked
 
 		return value
-
-	def waypointCost(self, grid, src, dest, waypts, reward, base_u):
-		help_u = 0
-		cum_prob = 1
-		for w in waypts:
-			path1, utility, prob = self.dijkstra(grid,src,w,0, cum_prob)
-			help_u += utility
-			cum_prob *= prob
-
-		path, final_u, prob = self.dijkstra(grid,waypts[-1],dest,reward, cum_prob)
-		help_u += final_u
-		cost = base_u - help_u
-		# print("Cost: ", cost)
-		return cost
-
-
-	def getAllCosts(self):
-		self.costs = defaultdict(list)
-		for w in self.waypoints:
-			for a in range(len(self.sellers)):
-				if len(w) == 2:
-					cost1 = self.waypointCost(self.grid,self.sellers[a],self.dests[a],[(w[0], w[1])],self.rewards[a],self.utilities[a])
-					self.costs[w].append(cost1)
-				elif len(w) == 4:
-					cost2 = self.waypointCost(self.grid,self.sellers[a],self.dests[a],[(w[0], w[1]), (w[2], w[3])],self.rewards[a],self.utilities[a])
-					self.costs[w].append(cost2)
 
 
 	def random_buyer_seller(self):
@@ -273,87 +329,127 @@ class OptimalBaseline:
 	def getAllValues(self):
 		self.waypoints = []
 		for i in range(len(self.buyers)):
-			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])])
+			print()
+			# print("Buyer:", self.buyers[i])
+			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[i], self.paths[i])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
 		# print("From getallvalues", self.waypoints)
 		# print("From getallvalues", self.values)
 		self.waypt_prices = {}
-		for i in range(len(self.waypoints)):
-			w1 = self.waypoints[i]
-			self.waypt_prices[w1] = self.values[w1[0]][w1[1]]
-			for j in range(len(self.waypoints)):
-				if i != j:
-					w2 = self.waypoints[j]
-					self.waypt_prices[(w1[0], w1[1], w2[0], w2[1])] = self.values[w1[0]][w1[1]] + self.values[w2[0]][w2[1]]
+		for w in self.waypoints:
+			if self.values[w[0]][w[1]]>0:
+				self.waypt_prices[w] = self.values[w[0]][w[1]]
 		self.waypoints = list(self.waypt_prices.keys())
 		
 
-	def assign(self):
-		nums = list(range(len(self.waypoints))) + [-1]
-		combs = list(itertools.product(nums, repeat=len(self.sellers)))
-		# print(combs)
-		best_profit = -float("Inf")
-		best_assignment = None
-		for c in combs:
-			perms = list(itertools.permutations(c))
-			for p in perms:
-				bundles = []
-				for i in p:
-					if i == -1:
-						bundles.append((-1, -1))
-					else:
-						bundles.append(self.waypoints[i])
-				# print(bundles)
-				total_cost = 0
-				pts_union = set()
-				for i in range(len(bundles)):
-					b = bundles[i]
-					if b != (-1, -1):
-						total_cost += self.costs[b][i]
-						if len(b) == 2:
-							pts_union.add((b[0], b[1]))
-						elif len(b) == 4:
-							pts_union.add((b[0], b[1]))
-							pts_union.add((b[2], b[3]))
-				total_value = 0
-				for pt in list(pts_union):
-					total_value += self.waypt_prices[pt]
-				profit = total_value - total_cost
-				if profit > best_profit:
-					best_profit = profit
-					best_assignment = p
-		self.assignments = defaultdict(list)
-		for i in range(len(best_assignment)):
-			w_index = best_assignment[i]
-			if w_index != -1:
-				w = self.waypoints[w_index]
-				if len(w) == 2:
-					self.assignments[self.sellers[i]].append(w)
-				elif len(w) == 4:
-					self.assignments[self.sellers[i]].append((w[0], w[1]))
-					self.assignments[self.sellers[i]].append((w[2], w[3]))
-		print("Best Profit", best_profit)
-		#TODO: ensure the costs, etc. reported match what iterauc gives
+	#TODO: remove unnecessary recomputation of cost
 
-
-
+	def iterative_market_singlepairs(self, eta):
+		print("Prices", self.waypt_prices)
+		old_surplus = None
+		if self.waypoints == []:
+			return 
+		iterations = 0
+		while True:
+			iterations += 1
+			print("assignments", self.assignments, "\n")
+			new_assignments = defaultdict(list)
+			supply = []
+			total_cost = 0
+			print("Sellers", self.sellers)
+			for a in range(len(self.sellers)):
+				best_profit = 0
+				best_cost = float("Inf")
+				best_bundle = None
+				for i in range(len(self.waypoints)):
+					w = self.waypoints[i]
+					path_help, cost = self.dijkstra_drone(self.grid,self.sellers[a],w)
+					
+					profit = self.waypt_prices[w] - cost
+					print("Seller", self.sellers[a], "Waypoint", w, "Profit", profit, "Cost", cost)
+					if profit >= best_profit: # TODO: fix this to be profit --> compare to optimal
+						best_profit = profit
+						best_cost = cost
+						best_bundle = [w]
+					for j in range(len(self.waypoints)):
+						w2 = None
+						if j != i:
+							w2 = self.waypoints[j]
+							path_help1, cost1 = self.dijkstra_drone(self.grid,self.sellers[a],w)
+							path_help2, cost2 = self.dijkstra_drone(self.grid,w,w2)
+							profit = self.waypt_prices[w] + self.waypt_prices[w2] - cost1 - cost2
+							if profit >= best_profit:
+								best_profit = profit
+								best_cost = cost
+								best_bundle = [w, w2]
+							print("Seller", self.sellers[a], "Waypoint", [w, w2], "Profit", profit, "Cost", cost1+cost2)
+				print("Agent", self.sellers[a], "Cost", best_cost, "Bundle", best_bundle)
+				if best_bundle is not None:
+					new_assignments[self.sellers[a]] += best_bundle
+					supply += new_assignments[self.sellers[a]]
+					total_cost += best_cost
+			# print(self.waypoints)
+			print("Supply", supply)
+			intersect = list(set(self.waypoints).intersection(set(supply)))
+			excess_demand = list((Counter(self.waypoints) - Counter(intersect)).elements())
+			excess_supply = list((Counter(supply) - Counter(intersect)).elements())
+			surplus_pts = excess_demand + excess_supply
+			print("Excess Demand", excess_demand)
+			print("Excess Supply", excess_supply)
+			surplus_value = 0
+			for p in intersect:
+				surplus_value += self.values[p[0]][p[1]]
+				print(surplus_value)
+			surplus_value -= total_cost
+			self.surplus.append(surplus_value)
+			# if surplus_value == 0:
+			# 	break
+			print("Surplus Value", surplus_value, "Total Cost", total_cost)
+			update = False
+			for p in surplus_pts:
+				if p in excess_supply:
+					newprice = (1-eta) * self.waypt_prices[p]
+					if newprice != self.waypt_prices[p]:
+						update = True
+						self.waypt_prices[p] = newprice
+				elif p in excess_demand:
+					newprice = min(self.values[p[0]][p[1]], self.waypt_prices[p] + (eta * (self.values[p[0]][p[1]] -self.waypt_prices[p])))
+					if newprice != self.waypt_prices[p]:
+						update = True
+						self.waypt_prices[p] = newprice
+			print("Updated prices", self.waypt_prices)
+			if not update: #TODO: keep track of size of largest update; if this falls below a certain threshold, break.
+				print("Price no longer updating.")
+				self.assignments = new_assignments
+				break
+			if old_surplus is None or surplus_value >= old_surplus or surplus_value < 0:
+				old_surplus = surplus_value
+				self.assignments = new_assignments
+			else:
+				break
+		if old_surplus is not None and old_surplus < 0:
+			self.assignments = defaultdict(list)
+		print("Final Assignment", self.assignments)
+		iters = iterations
+		print("Iterations", iterations)
 
 	def iterate(self):
 		start = time.time()
-		self.getAllPaths()
+		print(self.grid)
 		if self.sellers is None:
 			self.random_buyer_seller()
-		# print("Buyers", self.buyers)
-		# print("Sellers", self.sellers)
+		print("Buyers", self.buyers, "Sellers", self.sellers)
+		self.getAllPaths()
+		print("Utilities:", self.utilities)
+		for i in range(len(self.buyers)):
+			print("Agent:", self.buyers[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
 		self.getAllValues()
-		self.getAllCosts()
-		# print("Paths: ", self.paths)
+		# print("Paths: ", np.array(self.paths))
 		# print("Values: ", self.values)
-		# print("Waypoint starting prices", self.waypt_prices)
 		# print("Costs: ", self.costs)
 		# print("Waypoints: ", self.waypoints)
-		self.assign()
+		self.iterative_market_singlepairs(0.5)
 		print("Assignments: ", self.assignments)
 		end = time.time()
 		print("Elapsed time: ", end-start)
@@ -379,15 +475,29 @@ if __name__ == "__main__":
 	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (1,1), (4,3)], [(4,4), (2,3), (4,2)], [10,10,10])
 	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10)
 	# env.getEnv()
-	grid = [[0.,  0.,  0.,  0.,  0. ],
- 			[0.,  0.5, 0.,  0.,  0. ],
- 			[0.,  0.,  1.,  1.,  0. ],
- 			[0.,  0.5, 0.,  0.,  0.5],
- 			[0.,  0.,  0.,  0.,  0. ]]
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
-	g= OptimalBaseline(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
+	# grid = [[0.,  0.,  0.,  0.,  0. ],
+ 	# 		[0.,  0.5, 0.,  0.,  0. ],
+ 	# 		[0.,  0.,  1.,  1.,  0. ],
+ 	# 		[0.,  0.5, 0.,  0.,  0.5],
+ 	# 		[0.,  0.,  0.,  0.,  0. ]]
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
+	# g= IterativeAuction(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+	# g.iterate()
+
+	# Presentation Example
+	grid = [[0.5, 0.,  1.,  0.,  0. ],
+			[0.,  0.5, 1.,  0.,  0. ],
+			[0.5, 1.,  0.5, 0.,  0.5],
+			[0.5, 0.,  0.5, 0.,  0. ],
+			[1.,  0.,  0.,  0.,  0.5]]
+
+	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
+	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	print(g.agents[2])
+	# print(g.dijkstra(g.grid,g.agents[2],g.dests[2],g.rewards[2]))
 	g.iterate()
+
 
 	# grid = [[0,0,0],
 	# 		[0,0.5,0],
@@ -398,6 +508,22 @@ if __name__ == "__main__":
 	# g.iterate()
 	# start = time.time()
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+
+	#Test Dijkstra
+	# grid = [[1.,  0.5, 0.,  1.,  1. ],
+ 	# 		[0.5, 0.5, 1.,  1.,  0. ],
+ 	# 		[0.,  0.5, 0.,  1.,  0.5],
+ 	# 		[1.,  0.,  0.,  0.5, 0.5],
+ 	# 		[1.,  0.,  1.,  0.5, 0. ]]
+	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10, np.array(grid), [(3,1)], [(1,4)], [0])
+	# g = IterativeAuction(env)
+	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
+
+	# while iters < 2:
+	# 	env = EnvGenerator(5,5,4,0,0.8,0.2,25)
+	# 	env.getEnv()
+	# 	g = IterativeAuction(env) 
+	# 	g.iterate()
 
 # This code is inspired by Neelam Yadav's contribution.
 
