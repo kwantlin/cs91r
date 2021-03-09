@@ -482,17 +482,17 @@ if __name__ == "__main__":
 	# g.iterate()
 
 	# Presentation Example
-	grid = [[0.5, 0.,  1.,  0.,  0. ],
-			[0.,  0.5, 1.,  0.,  0. ],
-			[0.5, 1.,  0.5, 0.,  0.5],
-			[0.5, 0.,  0.5, 0.,  0. ],
-			[1.,  0.,  0.,  0.,  0.5]]
+	# grid = [[0.5, 0.,  1.,  0.,  0. ],
+	# 		[0.,  0.5, 1.,  0.,  0. ],
+	# 		[0.5, 1.,  0.5, 0.,  0.5],
+	# 		[0.5, 0.,  0.5, 0.,  0. ],
+	# 		[1.,  0.,  0.,  0.,  0.5]]
 
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
-	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
-	print(g.agents[2])
-	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.iterate()
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
+	# g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	# print(g.agents[2])
+	# # print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
+	# g.iterate()
 
 
 	# grid = [[0,0,0],
@@ -514,13 +514,14 @@ if __name__ == "__main__":
 	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10, np.array(grid), [(3,1)], [(1,4)], [0])
 	# g = IterativeAuction(env)
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
-	# while True:
-	# 	env = EnvGenerator(5,5,6,0.3,0.5,0.2,25)
-	# 	env.getEnv()
-	# 	g = IterativeAuction(env) 
-	# 	g.iterate()
-	# 	if g.iterations >=2:
-	# 		break
+
+	while True:
+		env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
+		env.getEnv()
+		g = IterativeAuction(env) 
+		g.iterate()
+		if g.iterations >=2:
+			break
 		# time.sleep(1)
 
 # This code is inspired by Neelam Yadav's contribution.

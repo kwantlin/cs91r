@@ -346,54 +346,176 @@ Elapsed time:  0.528331995010376
 
 
 ----------------
-[[0.  0.  0.  0.  0.5]
- [0.5 0.5 0.  0.5 0. ]
- [0.  0.5 0.5 1.  0. ]
- [0.  0.  0.5 0.  0. ]
- [0.5 0.  0.5 0.  0. ]]
-Agents [(3, 1), (1, 2), (0, 1), (3, 4), (0, 0), (3, 3)]
-Dests [(0, 2), (1, 4), (3, 0), (2, 0), (4, 4), (2, 4)]
-Rewards [25, 25, 25, 25, 25, 25]
-Utilities: [10.5, 23.0, 10.5, 9.5, 18.0, 24.0]
-Agent: (3, 1) Base Path: [(2, 2), (1, 2), (0, 2)] Base Utility: 10.5
-Agent: (1, 2) Base Path: [(0, 3), (1, 4)] Base Utility: 23.0
-Agent: (0, 1) Base Path: [(1, 1), (2, 0), (3, 0)] Base Utility: 10.5
-Agent: (3, 4) Base Path: [(3, 3), (2, 2), (3, 1), (2, 0)] Base Utility: 9.5
-Agent: (0, 0) Base Path: [(0, 1), (0, 2), (0, 3), (1, 4), (2, 4), (3, 4), (4, 4)] Base Utility: 18.0
-Agent: (3, 3) Base Path: [(2, 4)] Base Utility: 24.0
-Buyers [(0, 1), (0, 0), (3, 3)] Sellers [(1, 2), (3, 1), (3, 4)]
+[[0.  0.  0.  0.5 0. ]
+ [1.  0.5 0.  0.  0. ]
+ [0.  0.5 0.5 0.  0.5]
+ [0.5 0.  0.5 1.  0.5]
+ [0.5 1.  0.  0.5 0. ]]
+Agents [(3, 1), (4, 2), (2, 0), (1, 4)]
+Dests [(0, 0), (0, 1), (4, 4), (0, 2)]
+Rewards [25, 25, 25, 25]
+Utilities: [10.0, 10.0, 9.0, 23.0]
+Agent: (3, 1) Base Path: [(2, 2), (1, 2), (0, 1), (0, 0)] Base Utility: 10.0
+Agent: (4, 2) Base Path: [(3, 2), (2, 3), (1, 2), (0, 1)] Base Utility: 10.0
+Agent: (2, 0) Base Path: [(3, 1), (4, 2), (4, 3), (4, 4)] Base Utility: 9.0
+Agent: (1, 4) Base Path: [(1, 3), (0, 2)] Base Utility: 23.0
+Buyers [(4, 2), (1, 4)] Sellers [(2, 0), (3, 1)]
 
-Buyer: (0, 1)
+Buyer: (4, 2)
 
-Buyer: (0, 0)
-
-Buyer: (3, 3)
-Prices {(1, 0): 5.75, (1, 1): 11.5, (2, 1): 5.75, (2, 2): 6.25, (3, 2): 3.25, (4, 2): 3.25, (1, 3): 0.5}
+Buyer: (1, 4)
+Prices {(1, 1): 5.5, (2, 1): 5.5, (2, 2): 5.5, (3, 2): 10.75}
 assignments defaultdict(<class 'list'>, {}) 
 
-Sellers [(1, 2), (3, 1), (3, 4)]
-Supply [(2, 2), (1, 1), (2, 2), (1, 1)]
-Excess Demand [(1, 0), (2, 1), (3, 2), (4, 2), (1, 3)]
-Excess Supply [(2, 2), (1, 1)]
-Surplus Value 3.25
-Updated prices {(1, 0): 5.75, (1, 1): 5.75, (2, 1): 5.75, (2, 2): 3.125, (3, 2): 3.25, (4, 2): 3.25, (1, 3): 0.5}
-assignments defaultdict(<class 'list'>, {(3, 1): [(2, 2), (1, 1)], (3, 4): [(2, 2), (1, 1)]}) 
+Sellers [(2, 0), (3, 1)]
+Seller (2, 0) Waypoint (1, 1) Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(1, 1), None] Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(1, 1), (2, 1)] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(1, 1), (2, 2)] Cost 8.5 Profit 2.5
+Seller (2, 0) Waypoint [(1, 1), (3, 2)] Cost 8.25 Profit 8.0
+Seller (2, 0) Waypoint (2, 1) Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(2, 1), (1, 1)] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(2, 1), None] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(2, 1), (2, 2)] Cost 8.5 Profit 2.5
+Seller (2, 0) Waypoint [(2, 1), (3, 2)] Cost 8.25 Profit 8.0
+Seller (2, 0) Waypoint (2, 2) Cost 6.0 Profit -0.5
+Seller (2, 0) Waypoint [(2, 2), (1, 1)] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), (2, 1)] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), None] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), (3, 2)] Cost 9.25 Profit 7.0
+Seller (2, 0) Waypoint (3, 2) Cost 5.5 Profit 5.25
+Seller (2, 0) Waypoint [(3, 2), (1, 1)] Cost 9.25 Profit 7.0
+Seller (2, 0) Waypoint [(3, 2), (2, 1)] Cost 9.25 Profit 7.0
+Seller (2, 0) Waypoint [(3, 2), (2, 2)] Cost 9.5 Profit 6.75
+Seller (2, 0) Waypoint [(3, 2), None] Cost 9.5 Profit 6.75
+Seller (3, 1) Waypoint (1, 1) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(1, 1), None] Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(1, 1), (2, 1)] Cost 7.0 Profit 4.0
+Seller (3, 1) Waypoint [(1, 1), (2, 2)] Cost 7.0 Profit 4.0
+Seller (3, 1) Waypoint [(1, 1), (3, 2)] Cost 7.25 Profit 9.0
+Seller (3, 1) Waypoint (2, 1) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(2, 1), (1, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), None] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), (2, 2)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), (3, 2)] Cost 6.25 Profit 10.0
+Seller (3, 1) Waypoint (2, 2) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(2, 2), (1, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), (2, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), None] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), (3, 2)] Cost 6.25 Profit 10.0
+Seller (3, 1) Waypoint (3, 2) Cost 0.5 Profit 10.25
+Seller (3, 1) Waypoint [(3, 2), (1, 1)] Cost 6.0 Profit 10.25
+Seller (3, 1) Waypoint [(3, 2), (2, 1)] Cost 6.0 Profit 10.25
+Seller (3, 1) Waypoint [(3, 2), (2, 2)] Cost 6.0 Profit 10.25
+Seller (3, 1) Waypoint [(3, 2), None] Cost 6.0 Profit 10.25
+Supply [(2, 1), (3, 2), (3, 2), (2, 2)]
+Excess Demand [(1, 1)]
+Excess Supply [(3, 2)]
+Total value 21.75
+Total Cost 14.25
+Surplus Value 7.5
+Updated prices {(1, 1): 5.5, (2, 1): 5.5, (2, 2): 5.5, (3, 2): 5.375}
+assignments defaultdict(<class 'list'>, {(2, 0): [(2, 1), (3, 2)], (3, 1): [(3, 2), (2, 2)]}) 
 
-Sellers [(1, 2), (3, 1), (3, 4)]
-Supply [(2, 1), (4, 2)]
-Excess Demand [(1, 0), (1, 1), (2, 2), (3, 2), (1, 3)]
+Sellers [(2, 0), (3, 1)]
+Seller (2, 0) Waypoint (1, 1) Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(1, 1), None] Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(1, 1), (2, 1)] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(1, 1), (2, 2)] Cost 8.5 Profit 2.5
+Seller (2, 0) Waypoint [(1, 1), (3, 2)] Cost 8.25 Profit 2.625
+Seller (2, 0) Waypoint (2, 1) Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(2, 1), (1, 1)] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(2, 1), None] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(2, 1), (2, 2)] Cost 8.5 Profit 2.5
+Seller (2, 0) Waypoint [(2, 1), (3, 2)] Cost 8.25 Profit 2.625
+Seller (2, 0) Waypoint (2, 2) Cost 6.0 Profit -0.5
+Seller (2, 0) Waypoint [(2, 2), (1, 1)] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), (2, 1)] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), None] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), (3, 2)] Cost 9.25 Profit 1.625
+Seller (2, 0) Waypoint (3, 2) Cost 5.5 Profit -0.125
+Seller (2, 0) Waypoint [(3, 2), (1, 1)] Cost 9.25 Profit 1.625
+Seller (2, 0) Waypoint [(3, 2), (2, 1)] Cost 9.25 Profit 1.625
+Seller (2, 0) Waypoint [(3, 2), (2, 2)] Cost 9.5 Profit 1.375
+Seller (2, 0) Waypoint [(3, 2), None] Cost 9.5 Profit 1.375
+Seller (3, 1) Waypoint (1, 1) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(1, 1), None] Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(1, 1), (2, 1)] Cost 7.0 Profit 4.0
+Seller (3, 1) Waypoint [(1, 1), (2, 2)] Cost 7.0 Profit 4.0
+Seller (3, 1) Waypoint [(1, 1), (3, 2)] Cost 7.25 Profit 3.625
+Seller (3, 1) Waypoint (2, 1) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(2, 1), (1, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), None] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), (2, 2)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), (3, 2)] Cost 6.25 Profit 4.625
+Seller (3, 1) Waypoint (2, 2) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(2, 2), (1, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), (2, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), None] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), (3, 2)] Cost 6.25 Profit 4.625
+Seller (3, 1) Waypoint (3, 2) Cost 0.5 Profit 4.875
+Seller (3, 1) Waypoint [(3, 2), (1, 1)] Cost 6.0 Profit 4.875
+Seller (3, 1) Waypoint [(3, 2), (2, 1)] Cost 6.0 Profit 4.875
+Seller (3, 1) Waypoint [(3, 2), (2, 2)] Cost 6.0 Profit 4.875
+Seller (3, 1) Waypoint [(3, 2), None] Cost 6.0 Profit 4.875
+Supply [(2, 1), (1, 1), (2, 2)]
+Excess Demand [(3, 2)]
 Excess Supply []
-Surplus Value 9.0
-Updated prices {(1, 0): 5.75, (1, 1): 8.625, (2, 1): 5.75, (2, 2): 4.6875, (3, 2): 3.25, (4, 2): 3.25, (1, 3): 0.5}
-assignments defaultdict(<class 'list'>, {(3, 1): [(2, 1)], (3, 4): [(4, 2)]}) 
+Total value 16.5
+Total Cost 8.25
+Surplus Value 8.25
+Updated prices {(1, 1): 5.5, (2, 1): 5.5, (2, 2): 5.5, (3, 2): 8.0625}
+assignments defaultdict(<class 'list'>, {(2, 0): [(2, 1), (1, 1)], (3, 1): [(2, 2)]}) 
 
-Sellers [(1, 2), (3, 1), (3, 4)]
-Supply [(1, 1), (1, 1)]
-Excess Demand [(1, 0), (2, 1), (2, 2), (3, 2), (4, 2), (1, 3)]
-Excess Supply [(1, 1)]
-Surplus Value 8.5
-Updated prices {(1, 0): 5.75, (1, 1): 4.3125, (2, 1): 5.75, (2, 2): 5.46875, (3, 2): 3.25, (4, 2): 3.25, (1, 3): 0.5}
-Final Assignment defaultdict(<class 'list'>, {(3, 1): [(2, 1)], (3, 4): [(4, 2)]})
+Sellers [(2, 0), (3, 1)]
+Seller (2, 0) Waypoint (1, 1) Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(1, 1), None] Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(1, 1), (2, 1)] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(1, 1), (2, 2)] Cost 8.5 Profit 2.5
+Seller (2, 0) Waypoint [(1, 1), (3, 2)] Cost 8.25 Profit 5.3125
+Seller (2, 0) Waypoint (2, 1) Cost 5.5 Profit 0.0
+Seller (2, 0) Waypoint [(2, 1), (1, 1)] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(2, 1), None] Cost 8.25 Profit 2.75
+Seller (2, 0) Waypoint [(2, 1), (2, 2)] Cost 8.5 Profit 2.5
+Seller (2, 0) Waypoint [(2, 1), (3, 2)] Cost 8.25 Profit 5.3125
+Seller (2, 0) Waypoint (2, 2) Cost 6.0 Profit -0.5
+Seller (2, 0) Waypoint [(2, 2), (1, 1)] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), (2, 1)] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), None] Cost 9.25 Profit 1.75
+Seller (2, 0) Waypoint [(2, 2), (3, 2)] Cost 9.25 Profit 4.3125
+Seller (2, 0) Waypoint (3, 2) Cost 5.5 Profit 2.5625
+Seller (2, 0) Waypoint [(3, 2), (1, 1)] Cost 9.25 Profit 4.3125
+Seller (2, 0) Waypoint [(3, 2), (2, 1)] Cost 9.25 Profit 4.3125
+Seller (2, 0) Waypoint [(3, 2), (2, 2)] Cost 9.5 Profit 4.0625
+Seller (2, 0) Waypoint [(3, 2), None] Cost 9.5 Profit 4.0625
+Seller (3, 1) Waypoint (1, 1) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(1, 1), None] Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(1, 1), (2, 1)] Cost 7.0 Profit 4.0
+Seller (3, 1) Waypoint [(1, 1), (2, 2)] Cost 7.0 Profit 4.0
+Seller (3, 1) Waypoint [(1, 1), (3, 2)] Cost 7.25 Profit 6.3125
+Seller (3, 1) Waypoint (2, 1) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(2, 1), (1, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), None] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), (2, 2)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 1), (3, 2)] Cost 6.25 Profit 7.3125
+Seller (3, 1) Waypoint (2, 2) Cost 0.0 Profit 5.5
+Seller (3, 1) Waypoint [(2, 2), (1, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), (2, 1)] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), None] Cost 6.0 Profit 5.0
+Seller (3, 1) Waypoint [(2, 2), (3, 2)] Cost 6.25 Profit 7.3125
+Seller (3, 1) Waypoint (3, 2) Cost 0.5 Profit 7.5625
+Seller (3, 1) Waypoint [(3, 2), (1, 1)] Cost 6.0 Profit 7.5625
+Seller (3, 1) Waypoint [(3, 2), (2, 1)] Cost 6.0 Profit 7.5625
+Seller (3, 1) Waypoint [(3, 2), (2, 2)] Cost 6.0 Profit 7.5625
+Seller (3, 1) Waypoint [(3, 2), None] Cost 6.0 Profit 7.5625
+Supply [(2, 1), (3, 2), (3, 2), (2, 2)]
+Excess Demand [(1, 1)]
+Excess Supply [(3, 2)]
+Total value 21.75
+Total Cost 14.25
+Surplus Value 7.5
+Updated prices {(1, 1): 5.5, (2, 1): 5.5, (2, 2): 5.5, (3, 2): 4.03125}
+Final Assignment defaultdict(<class 'list'>, {(2, 0): [(2, 1), (1, 1)], (3, 1): [(2, 2)]})
 Iterations 3
-Assignments:  defaultdict(<class 'list'>, {(3, 1): [(2, 1)], (3, 4): [(4, 2)]})
-Elapsed time:  1.0726690292358398
+Assignments:  defaultdict(<class 'list'>, {(2, 0): [(2, 1), (1, 1)], (3, 1): [(2, 2)]})
+Elapsed time:  0.19902706146240234
