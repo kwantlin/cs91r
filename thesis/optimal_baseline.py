@@ -287,8 +287,20 @@ class OptimalBaseline:
 		# print("Base U", base_u)
 		# print("Utility of path through waypoints:", help_u)
 		cost = base_u - help_u
-
-		return cost
+		# print("Cost: ", cost)
+		# if cost < 0:
+		# 	print(self.grid)
+		# 	print("Source:", src)
+		# 	print("Dest:", dest)
+		# 	print("Waypts", waypts)
+		# 	print("Reward:", reward)
+		# 	print("Base Path", self.paths[self.agents.index(src)])
+		# 	print("Base U:", base_u)
+		# 	print("Help path", cum_path)
+		# 	print("Help_U", help_u)
+		# 	print("Cost", cost)
+		# 	raise Exception("Negative Cost!")
+		return cost, cum_path
 
 
 	def random_buyer_seller(self):
@@ -297,14 +309,14 @@ class OptimalBaseline:
 		sellers = set(random.sample(self.agents, num_sellers))
 		self.buyers = list(set(self.agents) - sellers)
 		self.sellers = list(sellers) 
-		print("Buyers", self.buyers, "Sellers", self.sellers)
+		# print("Buyers", self.buyers, "Sellers", self.sellers)
 
 
 	def getAllValues(self):
 		self.waypoints = []
 		for i in range(len(self.buyers)):
-			print()
-			print("Buyer:", self.buyers[i])
+			# print()
+			# print("Buyer:", self.buyers[i])
 			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])], self.paths[self.agents.index(self.buyers[i])])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
@@ -321,7 +333,7 @@ class OptimalBaseline:
 			for j in range(len(waypoints)):
 				if i != j:
 					self.waypoints.append([waypoints[i], waypoints[j]])
-		print(self.waypoints)
+		# print(self.waypoints)
 		
 
 	def assign(self):
@@ -348,7 +360,7 @@ class OptimalBaseline:
 				for i in range(len(bundles)):
 					b = bundles[i]
 					if b != (-1, -1):
-						cost = self.waypointCost(self.grid,self.sellers[i],self.dests[self.agents.index(self.sellers[i])],b,self.rewards[self.agents.index(self.sellers[i])],self.utilities[self.agents.index(self.sellers[i])])
+						cost, _ = self.waypointCost(self.grid,self.sellers[i],self.dests[self.agents.index(self.sellers[i])],b,self.rewards[self.agents.index(self.sellers[i])],self.utilities[self.agents.index(self.sellers[i])])
 						# print("Seller", self.sellers[i], "Waypoint", b, "Cost", cost)
 						total_cost += cost
 						# if len(b) == 2:
@@ -372,7 +384,7 @@ class OptimalBaseline:
 			if w_index != -1:
 				w = self.waypoints[w_index]
 				self.assignments[self.sellers[i]] = w
-		print("Best Profit", best_profit)
+		# print("Best Profit", best_profit)
 		#TODO: ensure the costs, etc. reported match what iterauc gives
 
 
@@ -392,9 +404,9 @@ class OptimalBaseline:
 		# print("Costs: ", self.costs)
 		# print("Waypoints: ", self.waypoints)
 		self.assign()
-		print("Assignments: ", self.assignments)
+		# print("Assignments: ", self.assignments)
 		end = time.time()
-		print("Elapsed time: ", end-start)
+		# print("Elapsed time: ", end-start)
 		return self.assignments
 
 	def visualize_surplus(self):
@@ -408,7 +420,7 @@ class OptimalBaseline:
 		plt.show()
 		
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 	# grid = [[0,0,0,0,0.5],
 	# 		[0,0,0,1,1],
 	# 		[0,1,0.5,0,1],
@@ -417,15 +429,15 @@ if __name__ == "__main__":
 	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (1,1), (4,3)], [(4,4), (2,3), (4,2)], [10,10,10])
 	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10)
 	# env.getEnv()
-	grid = [[0.,  0.,  0.,  0.,  0. ],
- 			[0.,  0.5, 0.,  0.,  0. ],
- 			[0.,  0.,  1.,  1.,  0. ],
- 			[0.,  0.5, 0.,  0.,  0.5],
- 			[0.,  0.,  0.,  0.,  0. ]]
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
-	g= OptimalBaseline(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
+	# grid = [[0.,  0.,  0.,  0.,  0. ],
+ 	# 		[0.,  0.5, 0.,  0.,  0. ],
+ 	# 		[0.,  0.,  1.,  1.,  0. ],
+ 	# 		[0.,  0.5, 0.,  0.,  0.5],
+ 	# 		[0.,  0.,  0.,  0.,  0. ]]
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
+	# g= OptimalBaseline(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
-	g.iterate()
+	# g.iterate()
 
 	# grid = [[0,0,0],
 	# 		[0,0.5,0],

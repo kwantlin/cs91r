@@ -48,10 +48,10 @@ class EnvGenerator:
                         while grid[i][j] == 0 or grid[i][j] == 1:
                             grid[i][j] = random.uniform(0,1)
         self.grid = grid
-        print(self.grid)
-        print("Agents", self.agents)
-        print("Dests", self.dests)
-        print("Rewards", self.rewards)
+        # print(self.grid)
+        # print("Agents", self.agents)
+        # print("Dests", self.dests)
+        # print("Rewards", self.rewards)
 
 if __name__ == "__main__":
     myenv = EnvGenerator(5,5,3,0.6,0.2,0.2,10)

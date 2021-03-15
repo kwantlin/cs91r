@@ -313,7 +313,7 @@ class IterativeAuction:
 		# 	print("Help_U", help_u)
 		# 	print("Cost", cost)
 		# 	raise Exception("Negative Cost!")
-		return cost
+		return cost, cum_path
 
 
 	def random_buyer_seller(self):
@@ -322,14 +322,14 @@ class IterativeAuction:
 		sellers = set(random.sample(self.agents, num_sellers))
 		self.buyers = list(set(self.agents) - sellers)
 		self.sellers = list(sellers) 
-		print("Buyers", self.buyers, "Sellers", self.sellers)
+		# print("Buyers", self.buyers, "Sellers", self.sellers)
 
 
 	def getAllValues(self):
 		self.waypoints = []
 		for i in range(len(self.buyers)):
-			print()
-			print("Buyer:", self.buyers[i])
+			# print()
+			# print("Buyer:", self.buyers[i])
 			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])], self.paths[self.agents.index(self.buyers[i])])
 			self.agent_val[self.agents[i]] = value
 			self.values = np.add(self.values, value)
@@ -345,27 +345,27 @@ class IterativeAuction:
 	#TODO: remove unnecessary recomputation of cost
 
 	def iterative_market_singlepairs(self, eta):
-		print("Prices", self.waypt_prices)
+		# print("Prices", self.waypt_prices)
 		old_surplus = None
 		if self.waypoints == []:
 			return 
 		iterations = 0
 		while True:
 			iterations += 1
-			print("assignments", self.assignments, "\n")
+			# print("assignments", self.assignments, "\n")
 			new_assignments = defaultdict(list)
 			supply = []
 			total_cost = 0
-			print("Sellers", self.sellers)
+			# print("Sellers", self.sellers)
 			for a in range(len(self.sellers)):
 				best_profit = 0
 				best_cost = float("Inf")
 				best_bundle = None
 				for i in range(len(self.waypoints)):
 					w = self.waypoints[i]
-					cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+					cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
 					profit = self.waypt_prices[w] - cost
-					print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost, "Profit", profit)
+					# print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost, "Profit", profit)
 					if profit >= best_profit: # TODO: fix this to be profit --> compare to optimal
 						best_profit = profit
 						best_cost = cost
@@ -374,36 +374,36 @@ class IterativeAuction:
 						w2 = None
 						if j != i:
 							w2 = self.waypoints[j]
-							cost = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w, w2],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+							cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w, w2],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
 							profit = self.waypt_prices[w] + self.waypt_prices[w2] - cost
 							if profit >= best_profit:
 								best_profit = profit
 								best_cost = cost
 								best_bundle = [w, w2]
-						print("Seller", self.sellers[a], "Waypoint", [w, w2], "Cost", cost, "Profit", profit)
+						# print("Seller", self.sellers[a], "Waypoint", [w, w2], "Cost", cost, "Profit", profit)
 				# print("Agent", self.sellers[a], "Cost", best_cost, "Bundle", best_bundle)
 				if best_bundle is not None:
 					new_assignments[self.sellers[a]] += best_bundle
 					supply += new_assignments[self.sellers[a]]
 					total_cost += best_cost
 			# print(self.waypoints)
-			print("Supply", supply)
+			# print("Supply", supply)
 			intersect = list(set(self.waypoints).intersection(set(supply)))
 			excess_demand = list((Counter(self.waypoints) - Counter(intersect)).elements())
 			excess_supply = list((Counter(supply) - Counter(intersect)).elements())
 			surplus_pts = excess_demand + excess_supply
-			print("Excess Demand", excess_demand)
-			print("Excess Supply", excess_supply)
+			# print("Excess Demand", excess_demand)
+			# print("Excess Supply", excess_supply)
 			surplus_value = 0
 			for p in intersect:
 				surplus_value += self.values[p[0]][p[1]]
-			print("Total value", surplus_value)
-			print("Total Cost", total_cost)
+			# print("Total value", surplus_value)
+			# print("Total Cost", total_cost)
 			surplus_value -= total_cost
 			self.surplus.append(surplus_value)
 			# if surplus_value == 0:
 			# 	break
-			print("Surplus Value", surplus_value)
+			# print("Surplus Value", surplus_value)
 			update = False
 			for p in surplus_pts:
 				if p in excess_supply:
@@ -416,9 +416,9 @@ class IterativeAuction:
 					if newprice != self.waypt_prices[p]:
 						update = True
 						self.waypt_prices[p] = newprice
-			print("Updated prices", self.waypt_prices)
+			# print("Updated prices", self.waypt_prices)
 			if not update: #TODO: keep track of size of largest update; if this falls below a certain threshold, break.
-				print("Price no longer updating.")
+				# print("Price no longer updating.")
 				self.assignments = new_assignments
 				break
 			if old_surplus is None or surplus_value >= old_surplus or (surplus_value < 0 and old_surplus < 0):
@@ -428,16 +428,16 @@ class IterativeAuction:
 				break
 		if old_surplus is not None and old_surplus < 0:
 			self.assignments = defaultdict(list)
-		print("Final Assignment", self.assignments)
+		# print("Final Assignment", self.assignments)
 		self.iterations = iterations
-		print("Iterations", self.iterations)
+		# print("Iterations", self.iterations)
 
 	def iterate(self):
 		start = time.time()
 		self.getAllPaths()
-		print("Utilities:", self.utilities)
-		for i in range(len(self.agents)):
-			print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
+		# print("Utilities:", self.utilities)
+		# for i in range(len(self.agents)):
+			# print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
 		if self.sellers is None:
 			self.random_buyer_seller()
 		self.getAllValues()
@@ -446,9 +446,9 @@ class IterativeAuction:
 		# print("Costs: ", self.costs)
 		# print("Waypoints: ", self.waypoints)
 		self.iterative_market_singlepairs(0.5)
-		print("Assignments: ", self.assignments)
+		# print("Assignments: ", self.assignments)
 		end = time.time()
-		print("Elapsed time: ", end-start)
+		# print("Elapsed time: ", end-start)
 		return self.assignments
 
 	def visualize_surplus(self):
