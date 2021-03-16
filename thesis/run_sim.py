@@ -12,7 +12,7 @@ import time
 from collections import defaultdict
 import random
 import matplotlib.pyplot as plt
-from statistics import mean 
+from statistics import mean, stdev
 import pandas as pd 
 import seaborn as sns 
 
@@ -175,7 +175,7 @@ def runSims(assignonly=False):
 	iter_help_costs = []
 	
 	i = 0
-	while i < 100:
+	while i < 5:
 		print(i)
 		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
 		env.getEnv()
@@ -241,20 +241,45 @@ def runSims(assignonly=False):
 	print("Average Help Costs Iter Auc", avg_iter_help_costs)
 
 
-	data = {"Cat": ["Iter Auction vs No Exchange", "Optimal vs No Exchange"], 
-        "Diff": [avg_diff_iter_nosell, avg_diff_opt_nosell]} 
-	df = pd.DataFrame(data, columns=['Cat', 'Diff']) 
-	plt.figure(figsize=(8, 8)) 
-	plots = sns.barplot(x="Cat", y="Diff", data=df) 
-	for bar in plots.patches: 
-		plots.annotate(format(bar.get_height(), '.2f'),  
-						(bar.get_x() + bar.get_width() / 2,  
-							bar.get_height()), ha='center', va='center', 
-						size=15, xytext=(0, 8), 
-						textcoords='offset points') 
-	plt.title("Empirical Comparisons") 
-	plt.savefig("cost-comp-onlyassign100.png")
-	plt.show() 
+	diff_iter_nosell_error = stdev(diff_iter_nosell)
+	diff_opt_nosell_error = stdev(diff_opt_nosell)
+	eu_error = [diff_iter_nosell_error, diff_opt_nosell_error]
+
+	labels = ["Iter Auction vs No Exchange", "Optimal vs No Exchange"]
+	x_pos = np.arange(len(labels))
+	ys = [avg_diff_iter_nosell, avg_diff_opt_nosell]
+	fig, ax = plt.subplots()
+	ax.bar(x_pos, ys,
+		yerr=eu_error,
+		align='center',
+		alpha=0.5,
+		ecolor='black',
+		capsize=10)
+	ax.set_ylabel('Difference in Expected Utility')
+	ax.set_xticks(x_pos)
+	ax.set_xticklabels(labels)
+	# ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
+	ax.yaxis.grid(True)
+
+	# Save the figure and show
+	plt.tight_layout()
+	plt.savefig('test.png')
+	plt.show()
+
+	# data = {"Cat": ["Iter Auction vs No Exchange", "Optimal vs No Exchange"], 
+    #     "Diff": [avg_diff_iter_nosell, avg_diff_opt_nosell]} 
+	# df = pd.DataFrame(data, columns=['Cat', 'Diff']) 
+	# plt.figure(figsize=(8, 8)) 
+	# plots = sns.barplot(x="Cat", y="Diff", data=df) 
+	# for bar in plots.patches: 
+	# 	plots.annotate(format(bar.get_height(), '.2f'),  
+	# 					(bar.get_x() + bar.get_width() / 2,  
+	# 						bar.get_height()), ha='center', va='center', 
+	# 					size=15, xytext=(0, 8), 
+	# 					textcoords='offset points') 
+	# plt.title("Empirical Comparisons") 
+	# plt.savefig("test.png")
+	# plt.show() 
 	
 
 if __name__ == "__main__":
