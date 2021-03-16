@@ -339,7 +339,7 @@ class OptimalBaseline:
 	def assign(self):
 		nums = list(range(len(self.waypoints))) + [-1]
 		combs = list(itertools.product(nums, repeat=len(self.sellers)))
-		# print(combs)
+		print(combs)
 		best_profit = -float("Inf")
 		best_assignment = None
 		for c in combs:

@@ -2,9 +2,8 @@ from collections import defaultdict
 import itertools
 import random
 from envgenerator import EnvGenerator
-from iterative_auction_expectedu import IterativeAuction
 from iterative_auction_drone import IterativeAuctionDrone
-from optimal_baseline import OptimalBaseline
+from optimal_baseline_drone import OptimalBaselineDrone
 from collections import defaultdict, Counter
 from scipy import optimize
 import numpy as np
@@ -23,8 +22,6 @@ class Simulation:
 		self.agents = planner.agents
 		self.helper_paths = {}
 		self.revealed_grid=revealed_grid
-	# def nofails(self):
-	# 	for a self.agents
 
 	def printGrid(self, grid, agents):
 		for i in range(len(grid)):
@@ -63,17 +60,17 @@ class Simulation:
 		self.helper_paths = {}
 		self.nonhelper_paths = None
 		agents_pos_updates = {}
-		for a in self.agents:
+		for a in self.nonhelpers: # we only want to track buyers here, since only they get initial dest rewards
 			agents_pos_updates[a] = a
 		if helpers:
 			for i in range(len(helpers)):
 				if helpers[i] in assignments:
-					try:
-						path = planner.waypointCost(planner.grid,helpers[i],planner.dests[planner.agents.index(helpers[i])],assignments[helpers[i]],planner.rewards[planner.agents.index(helpers[i])],planner.utilities[planner.agents.index(helpers[i])])[1]
-					except:
-						path = []
-						for p in assignments[helpers[i]]:
-							path += planner.waypointCost(planner.grid,helpers[i],p)[1]
+					path = []
+					start = helpers[i]
+					for p in assignments[helpers[i]]:
+						end = p
+						path += planner.waypointCost(planner.grid,start,end)[1]
+						start = p
 					self.helper_paths[helpers[i]] = path 
 		# print("Helper paths", self.helper_paths)
 		cost = 0
@@ -99,19 +96,11 @@ class Simulation:
 								grid[p[0]][p[1]] = self.revealed_grid[p[0]][p[1]]
 							else:
 								grid[p[0]][p[1]] = np.random.choice([0,1], p=[1-grid[p[0]][p[1]], grid[p[0]][p[1]]])
-						if grid[p[0]][p[1]] == 1:
-							total_fail += 1
-							# print(str(p) + " is blocked.")
-							del self.helper_paths[a]
-							for wp in assignments[a]: # this helper can no longer help collect any waypoint info it hasn't already found, so don't make buyers wait
-								if wp in waypts:
-									waypts.remove(wp) 
-						else:
 							agents_pos_updates[a] = p
 
 					else:
 						del self.helper_paths[a] #helper agent has reached its destination
-			if waypts == []: #time to get nonhelpers' new paths bc waypoints all reached or cannot be accessed by assigned helper
+			if waypts == []: #time to get nonhelpers' new paths
 				if self.nonhelper_paths is None:
 					repeat = True
 					self.nonhelper_paths = {}
@@ -148,9 +137,9 @@ class Simulation:
 		total_u = 0
 		total_success = 0
 		for a in agents_pos_updates:
-			if agents_pos_updates[a] == self.planner.dests[self.agents.index(a)]:
+			if agents_pos_updates[a] == planner.dests[self.agents.index(a)]:
 				total_success += 1
-				total_u += self.planner.rewards[self.agents.index(a)]
+				total_u += planner.rewards[self.agents.index(a)]
 		total_u -= cost
 		# print("Total Utility:", total_u)
 		self.help_cost = help_cost
@@ -179,7 +168,7 @@ def runSims(assignonly=False):
 		print(i)
 		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
 		env.getEnv()
-		iter_auc = IterativeAuction(env) 
+		iter_auc = IterativeAuctionDrone(env) 
 		sim = Simulation(iter_auc)
 		revealed_grid, cost_it, total_u_it, total_fail_it = sim.move_until_fail()
 		if assignonly and not sim.assignments: #if we want to compare envs with assignments but get none move to next
@@ -190,13 +179,14 @@ def runSims(assignonly=False):
 		if revealed_grid is not None:
 			iter_auc_costs.append(cost_it)
 			sellers = iter_auc.sellers
+			# print("sellers", sellers)
 			buyers = iter_auc.buyers
 			iter_help_costs.append(sim.help_cost)
 			iter_total_success.append(sim.total_success)
 			iter_total_fail.append(sim.total_fail)
 
 			# print("Beginning Optimal")
-			opt_assign = OptimalBaseline(env, sellers, buyers) 
+			opt_assign = OptimalBaselineDrone(env, sellers, buyers) 
 			sim = Simulation(opt_assign, revealed_grid)
 			_, cost_opt, total_u_opt, total_fail_opt = sim.move_until_fail()
 			opt_costs.append(cost_opt)
@@ -204,15 +194,13 @@ def runSims(assignonly=False):
 			
 
 			sellers = []
-			buyers = iter_auc.agents
-			iter_auc = IterativeAuction(env, sellers, buyers) 
+			buyers = iter_auc.buyers
+			iter_auc = IterativeAuctionDrone(env, sellers, buyers) 
 			sim = Simulation(iter_auc, revealed_grid)
 			_, cost_nosell, total_u_nosell, total_fail_nosell = sim.move_until_fail()
-			
 			nosell_costs.append(cost_nosell)
 			diff_iter_nosell.append(total_u_it - total_u_nosell)
 			diff_opt_nosell.append(total_u_opt - total_u_nosell)
-			
 			failcomp_iter_nosell.append(total_fail_nosell - total_fail_it)
 			nosell_total_success.append(sim.total_success)
 			nosell_total_fail.append(sim.total_fail)
@@ -236,7 +224,7 @@ def runSims(assignonly=False):
 	avg_failcomp_iter_nosell = mean(failcomp_iter_nosell)
 	avg_iter_help_costs = mean(iter_help_costs)
 	print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell)
-	print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell)
+	print(avg_diff_opt_nosell)
 	print("Average decrease in num failures due to iterauc", avg_failcomp_iter_nosell)
 	print("Average Help Costs Iter Auc", avg_iter_help_costs)
 
@@ -253,7 +241,7 @@ def runSims(assignonly=False):
 						size=15, xytext=(0, 8), 
 						textcoords='offset points') 
 	plt.title("Empirical Comparisons") 
-	plt.savefig("cost-comp-onlyassign100.png")
+	plt.savefig("cost-comp-drone-onlyassign100.png")
 	plt.show() 
 	
 
@@ -267,10 +255,12 @@ if __name__ == "__main__":
 	# 		[0.5, 0.,  0.5, 0.,  0. ],
 	# 		[1.,  0.,  0.,  0.,  0.5]]
 	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
+	# env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
+	# env.getEnv()
 
 	# iter_auc = IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# sim = Simulation(iter_auc)
-	# revealed_grid, cost_it, total_u_it,_ = sim.move_until_fail()
+	# revealed_grid, cost_it, total_u_it = sim.move_until_fail()
 
 	# time.sleep(2)
 	# sellers = iter_auc.sellers
@@ -278,8 +268,8 @@ if __name__ == "__main__":
 
 	# print("Beginning Optimal")
 	# opt_assign = OptimalBaseline(env, sellers, buyers) 
-	# sim = Simulation(opt_assign, revealed_grid)
-	# _, cost_opt, total_u_opt,_ = sim.move_until_fail()
+	# sim = Simulation(opt_assign, revealed_grid, iter_auc)
+	# _, cost_opt, total_u_opt = sim.move_until_fail()
 
 	# print("End of optimal")
 	# time.sleep(2)
@@ -287,7 +277,7 @@ if __name__ == "__main__":
 	# buyers = iter_auc.agents
 	# iter_auc = IterativeAuction(env, sellers, buyers) 
 	# sim = Simulation(iter_auc, revealed_grid)
-	# _, cost_nosell, total_u_nosell,_ = sim.move_until_fail()
+	# _, cost_nosell, total_u_nosell = sim.move_until_fail()
 
 	
 

@@ -10,6 +10,7 @@ from collections import defaultdict
 import random
 import matplotlib.pyplot as plt
 import math
+import pickle
 
 #Class to represent a graph 
 
@@ -350,6 +351,8 @@ class IterativeAuction:
 		if self.waypoints == []:
 			return 
 		iterations = 0
+		prev_prices = []
+		prev_prices.append(self.waypt_prices)
 		while True:
 			iterations += 1
 			# print("assignments", self.assignments, "\n")
@@ -357,6 +360,7 @@ class IterativeAuction:
 			supply = []
 			total_cost = 0
 			# print("Sellers", self.sellers)
+			# print("Waypoints:", self.waypoints)
 			for a in range(len(self.sellers)):
 				best_profit = 0
 				best_cost = float("Inf")
@@ -404,27 +408,21 @@ class IterativeAuction:
 			# if surplus_value == 0:
 			# 	break
 			# print("Surplus Value", surplus_value)
-			update = False
+			# print("New Assignments", new_assignments)
 			for p in surplus_pts:
 				if p in excess_supply:
 					newprice = (1-eta * (excess_supply.count(p))) * self.waypt_prices[p]
 					if newprice != self.waypt_prices[p]:
-						update = True
 						self.waypt_prices[p] = newprice
 				elif p in excess_demand:
 					newprice = min(self.values[p[0]][p[1]], self.waypt_prices[p] + (eta * (self.values[p[0]][p[1]] -self.waypt_prices[p])))
 					if newprice != self.waypt_prices[p]:
-						update = True
 						self.waypt_prices[p] = newprice
 			# print("Updated prices", self.waypt_prices)
-			if not update: #TODO: keep track of size of largest update; if this falls below a certain threshold, break.
-				# print("Price no longer updating.")
-				self.assignments = new_assignments
-				break
-			if old_surplus is None or surplus_value >= old_surplus or (surplus_value < 0 and old_surplus < 0):
+			if old_surplus is None or surplus_value >= old_surplus:
 				old_surplus = surplus_value
 				self.assignments = new_assignments
-			else:
+			if self.waypt_prices in prev_prices:
 				break
 		if old_surplus is not None and old_surplus < 0:
 			self.assignments = defaultdict(list)
@@ -482,17 +480,17 @@ if __name__ == "__main__":
 	# g.iterate()
 
 	# Presentation Example
-	# grid = [[0.5, 0.,  1.,  0.,  0. ],
-	# 		[0.,  0.5, 1.,  0.,  0. ],
-	# 		[0.5, 1.,  0.5, 0.,  0.5],
-	# 		[0.5, 0.,  0.5, 0.,  0. ],
-	# 		[1.,  0.,  0.,  0.,  0.5]]
+	grid = [[0.5, 0.,  1.,  0.,  0. ],
+			[0.,  0.5, 1.,  0.,  0. ],
+			[0.5, 1.,  0.5, 0.,  0.5],
+			[0.5, 0.,  0.5, 0.,  0. ],
+			[1.,  0.,  0.,  0.,  0.5]]
 
-	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (1, 3)], [25, 25, 25, 25])
-	# g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (3, 3)], [25, 25, 25, 25])
+	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
-	# # print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	# g.iterate()
+	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
+	g.iterate()
 
 
 	# grid = [[0,0,0],
@@ -515,13 +513,13 @@ if __name__ == "__main__":
 	# g = IterativeAuction(env)
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
 
-	while True:
-		env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
-		env.getEnv()
-		g = IterativeAuction(env) 
-		g.iterate()
-		if g.iterations >=2:
-			break
+	# while True:
+	# 	env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
+	# 	env.getEnv()
+	# 	g = IterativeAuction(env) 
+	# 	g.iterate()
+	# 	if g.iterations >=2:
+	# 		break
 		# time.sleep(1)
 
 # This code is inspired by Neelam Yadav's contribution.
