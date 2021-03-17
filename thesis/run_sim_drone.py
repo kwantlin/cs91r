@@ -5,7 +5,6 @@ from envgenerator import EnvGenerator
 from iterative_auction_drone import IterativeAuctionDrone
 from optimal_baseline_drone import OptimalBaselineDrone
 from collections import defaultdict, Counter
-from scipy import optimize
 import numpy as np
 import time
 from collections import defaultdict
@@ -256,29 +255,7 @@ def runSims(assignonly=False):
 
 	#Visualize number of failures
 	
-	N = 5
-	success_means = (mean(iter_total_success), mean(nosell_total_success))
-	fail_means = (mean(iter_total_fail), mean(nosell_total_fail))
-	successStd = (stdev(iter_total_success), stdev(nosell_total_success))
-	failStd = (stdev(iter_total_fail), stdev(nosell_total_fail))
-
-	# the x locations for the groups
-	ind = np.arange(2)    
-	# the width of the bars
-	width = 0.35      
-
-	p1 = plt.bar(ind, success_means, width, yerr=successStd, color='red')
-	p2 = plt.bar(ind, fail_means, width,
-	bottom=success_means, yerr=failStd, color='green')
-
-	plt.ylabel('Fail/Success Split')
-	plt.xlabel('Setting')
-	# plt.title('Scores by group\n' + 'and gender')
-	plt.xticks(ind, ('Group1', 'Group2', 'Group3', 'Group4', 'Group5'))
-	plt.yticks(np.arange(0, 81, 10))
-	plt.legend((p1[0], p2[0]), ('Men', 'Women'))
-
-	plt.show()
+	
 
 	# data = {"Cat": ["Iter Auction vs No Exchange", "Optimal vs No Exchange"], 
     #     "Diff": [avg_diff_iter_nosell, avg_diff_opt_nosell]} 
