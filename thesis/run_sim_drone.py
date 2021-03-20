@@ -134,10 +134,9 @@ class Simulation:
 				break
 		# print("Total Cost:", cost)
 		total_u = 0
-		total_success = 0
+		total_success = len(self.nonhelpers) - total_fail
 		for a in agents_pos_updates:
 			if agents_pos_updates[a] == planner.dests[self.agents.index(a)]:
-				total_success += 1
 				total_u += planner.rewards[self.agents.index(a)]
 		total_u -= cost
 		# print("Total Utility:", total_u)
@@ -148,6 +147,10 @@ class Simulation:
 
 
 def runSims(assignonly=False):
+	iter_auc_u = []
+	opt_u = []
+	nosell_u = []
+
 	iter_auc_costs = []
 	opt_costs = []
 	nosell_costs = []
@@ -155,59 +158,79 @@ def runSims(assignonly=False):
 	diff_opt_nosell = []
 	diff_iter_nosell = []
 
+	costdiff_iter_nosell = []
+	costdiff_opt_nosell = []
+
 	iter_total_success = []
 	iter_total_fail = []
-	failcomp_iter_nosell = []
+	opt_total_success = []
+	opt_total_fail = []
 	nosell_total_success = []
 	nosell_total_fail = []
+
 	iter_help_costs = []
+
+	successdiff_iter_nosell = []
+	successdiff_opt_nosell = []
+	faildiff_iter_nosell = []
+	faildiff_opt_nosell = []
 	
 	i = 0
-	while i < 5:
+	while i < 10:
 		print(i)
 		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
 		env.getEnv()
 		iter_auc = IterativeAuctionDrone(env) 
-		sim = Simulation(iter_auc)
-		revealed_grid, cost_it, total_u_it, total_fail_it = sim.move_until_fail()
-		if assignonly and not sim.assignments: #if we want to compare envs with assignments but get none move to next
+		sim1 = Simulation(iter_auc)
+		revealed_grid, cost_it, total_u_it, total_fail_it = sim1.move_until_fail()
+		if assignonly and not sim1.assignments: #if we want to compare envs with assignments but get none move to next
 			continue
 		else:
 			i += 1
 
 		if revealed_grid is not None:
+			iter_auc_u.append(total_u_it)
 			iter_auc_costs.append(cost_it)
 			sellers = iter_auc.sellers
-			# print("sellers", sellers)
 			buyers = iter_auc.buyers
-			iter_help_costs.append(sim.help_cost)
-			iter_total_success.append(sim.total_success)
-			iter_total_fail.append(sim.total_fail)
+			iter_help_costs.append(sim1.help_cost)
+			iter_total_success.append(sim1.total_success)
+			iter_total_fail.append(sim1.total_fail)
 
 			# print("Beginning Optimal")
 			opt_assign = OptimalBaselineDrone(env, sellers, buyers) 
-			sim = Simulation(opt_assign, revealed_grid)
-			_, cost_opt, total_u_opt, total_fail_opt = sim.move_until_fail()
+			sim2 = Simulation(opt_assign, revealed_grid)
+			_, cost_opt, total_u_opt, total_fail_opt = sim2.move_until_fail()
+			opt_u.append(total_u_opt)
 			opt_costs.append(cost_opt)
+			opt_total_success.append(sim2.total_success)
+			opt_total_fail.append(sim2.total_fail)
 			# print("End of optimal")
 			
 
 			sellers = []
 			buyers = iter_auc.buyers
 			iter_auc = IterativeAuctionDrone(env, sellers, buyers) 
-			sim = Simulation(iter_auc, revealed_grid)
-			_, cost_nosell, total_u_nosell, total_fail_nosell = sim.move_until_fail()
+			sim3 = Simulation(iter_auc, revealed_grid)
+			_, cost_nosell, total_u_nosell, total_fail_nosell = sim3.move_until_fail()
+			nosell_u.append(total_u_nosell)
 			nosell_costs.append(cost_nosell)
+			nosell_total_success.append(sim3.total_success)
+			nosell_total_fail.append(sim3.total_fail)
+
 			diff_iter_nosell.append(total_u_it - total_u_nosell)
 			diff_opt_nosell.append(total_u_opt - total_u_nosell)
-			failcomp_iter_nosell.append(total_fail_nosell - total_fail_it)
-			nosell_total_success.append(sim.total_success)
-			nosell_total_fail.append(sim.total_fail)
+			
+			successdiff_iter_nosell = np.subtract(np.array(iter_total_success), np.array(nosell_total_success))
+			successdiff_opt_nosell = np.subtract(np.array(opt_total_success), np.array(nosell_total_success))
+			faildiff_iter_nosell = np.subtract(np.array(iter_total_fail), np.array(nosell_total_fail))
+			faildiff_opt_nosell = np.subtract(np.array(opt_total_fail), np.array(nosell_total_fail))
 
+			costdiff_iter_nosell = np.subtract(np.array(iter_auc_costs), np.array(nosell_costs))
+			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
 
 	print("Diff iter nosell", diff_iter_nosell)
 	print("Diff opt nosell", diff_opt_nosell)
-	print("Fail Comp iter nosell", failcomp_iter_nosell)
 
 	print("Help Cost Iter", iter_help_costs)
 	print("Iter Auc Costs", iter_auc_costs)
@@ -215,18 +238,31 @@ def runSims(assignonly=False):
 
 	print("Iter Auc Fails", iter_total_fail)
 	print("Iter Auc Successes", iter_total_success)
+	print("Opt Fails", opt_total_fail)
+	print("Opt Successes", opt_total_success)
 	print("Nosell Fails", nosell_total_fail)
 	print("Nosell Successes", nosell_total_success)
 
+	avg_diff_success_iter_nosell = np.mean(successdiff_iter_nosell)
+	avg_diff_success_opt_nosell = np.mean(successdiff_opt_nosell)
+	print("Average Diff Success Iter Nosell", avg_diff_success_iter_nosell)
+	print("Average Diff Success Opt Nosell", avg_diff_success_opt_nosell)
+
+
 	avg_diff_iter_nosell = mean(diff_iter_nosell)
 	avg_diff_opt_nosell = mean(diff_opt_nosell)
-	avg_failcomp_iter_nosell = mean(failcomp_iter_nosell)
 	avg_iter_help_costs = mean(iter_help_costs)
 	print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell)
-	print(avg_diff_opt_nosell)
-	print("Average decrease in num failures due to iterauc", avg_failcomp_iter_nosell)
-	print("Average Help Costs Iter Auc", avg_iter_help_costs)
+	print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell)
 
+	avg_costdiff_iter_nosell = np.mean(costdiff_iter_nosell)
+	avg_costdiff_opt_nosell = np.mean(costdiff_opt_nosell)
+	print("Average Help Costs Iter Auc", avg_iter_help_costs)
+	print("Average Cost Diff Iterauc vs Nosell", avg_costdiff_iter_nosell)
+	print("Average Cost Diff Opt vs Nosell", avg_costdiff_opt_nosell)
+
+
+	#Visualize Expected U Difference
 
 	diff_iter_nosell_error = stdev(diff_iter_nosell)
 	diff_opt_nosell_error = stdev(diff_opt_nosell)
@@ -250,12 +286,102 @@ def runSims(assignonly=False):
 
 	# Save the figure and show
 	plt.tight_layout()
-	plt.savefig('testdrone.png')
+	plt.savefig('eu-diff-drone.png')
 	plt.show()
 
-	#Visualize number of failures
-	
-	
+
+	#Visualize Expected U for each setting
+
+	avg_iter_u = mean(iter_auc_u)
+	avg_opt_u = mean(opt_u)
+	avg_nosell_u = mean(nosell_u)
+
+	iter_u_error = stdev(iter_auc_u)
+	opt_u_error = stdev(opt_u)
+	nosell_u_error = stdev(nosell_u)
+
+	eu_error = [nosell_u_error, iter_u_error, opt_u_error]
+
+	labels = ["No Info Exchange", "Iterative Auction", "Optimal Exchange"]
+	x_pos = np.arange(len(labels))
+	ys = [avg_nosell_u, avg_iter_u, avg_opt_u]
+	fig, ax = plt.subplots()
+	ax.bar(x_pos, ys,
+		yerr=eu_error,
+		align='center',
+		alpha=0.5,
+		ecolor='black',
+		capsize=10)
+	ax.set_ylabel('Expected Utility Across Settings')
+	ax.set_xticks(x_pos)
+	ax.set_xticklabels(labels)
+	# ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
+	ax.yaxis.grid(True)
+
+	# Save the figure and show
+	plt.tight_layout()
+	plt.savefig('eu-allsettings-drone.png')
+	plt.show()
+
+	#Visualize Successs/Fails
+
+	success_means = (mean(nosell_total_success), mean(iter_total_success), mean(opt_total_success))
+	success_std = (stdev(nosell_total_success), stdev(iter_total_success), stdev(opt_total_success))
+	fail_means = (mean(nosell_total_fail), mean(iter_total_fail), mean(opt_total_fail))
+	fail_std = (stdev(nosell_total_fail), stdev(iter_total_fail), stdev(opt_total_fail))
+
+	# the x locations for the groups
+	ind = np.arange(3)    
+	# the width of the bars
+	width = 0.55     
+
+	p1 = plt.bar(ind, success_means, width, yerr=success_std, color='green')
+	p2 = plt.bar(ind, fail_means, width,
+	bottom=success_means, yerr=fail_std, color='red')
+
+	plt.ylabel('Fail/Success Split')
+	plt.xlabel('Setting')
+	# plt.title('Scores by group\n' + 'and gender')
+	plt.xticks(ind, ('No information exchange', 'Iterative Auction', 'Optimal Allocation'))
+	plt.yticks(np.arange(0, 5, 1))
+	plt.legend((p1[0], p2[0]), ('Successes', 'Failures'))
+
+	plt.savefig('sfcomp-drone.png')
+	plt.show()
+
+	#Visualize Cost for each Setting
+
+	avg_iter_auc_cost = mean(iter_auc_costs)
+	avg_opt_cost = mean(opt_costs)
+	avg_nosell_cost = mean(nosell_costs)
+
+	iter_cost_error = stdev(iter_auc_costs)
+	opt_cost_error = stdev(opt_costs)
+	nosell_cost_error = stdev(nosell_costs)
+
+	eu_error = [nosell_cost_error, iter_cost_error, opt_cost_error]
+
+	labels = ["No Info Exchange", "Iterative Auction", "Optimal Exchange"]
+	x_pos = np.arange(len(labels))
+	ys = [avg_nosell_cost, avg_iter_auc_cost, avg_opt_cost]
+	fig, ax = plt.subplots()
+	ax.bar(x_pos, ys,
+		yerr=eu_error,
+		align='center',
+		alpha=0.5,
+		ecolor='black',
+		capsize=10)
+	ax.set_ylabel('Cost Across Settings')
+	ax.set_xticks(x_pos)
+	ax.set_xticklabels(labels)
+	# ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
+	ax.yaxis.grid(True)
+
+	# Save the figure and show
+	plt.tight_layout()
+	plt.savefig('cost-allsettings-drone.png')
+	plt.show()
+
 
 	# data = {"Cat": ["Iter Auction vs No Exchange", "Optimal vs No Exchange"], 
     #     "Diff": [avg_diff_iter_nosell, avg_diff_opt_nosell]} 
@@ -269,7 +395,7 @@ def runSims(assignonly=False):
 	# 					size=15, xytext=(0, 8), 
 	# 					textcoords='offset points') 
 	# plt.title("Empirical Comparisons") 
-	# plt.savefig("cost-comp-drone-onlyassign100.png")
+	# plt.savefig("test.png")
 	# plt.show() 
 	
 

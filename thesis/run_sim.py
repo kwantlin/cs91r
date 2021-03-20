@@ -189,7 +189,7 @@ def runSims(assignonly=False):
 	faildiff_opt_nosell = []
 	
 	i = 0
-	while i < 100:
+	while i < 50:
 		print(i)
 		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
 		env.getEnv()
