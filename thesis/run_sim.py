@@ -2,8 +2,8 @@ from collections import defaultdict
 import itertools
 import random
 from envgenerator import EnvGenerator
-from iterative_auction_expectedu import IterativeAuction
-from iterative_auction_drone import IterativeAuctionDrone
+from greedy import Greedy
+from iterative_auction import IterativeAuction
 from optimal_baseline import OptimalBaseline
 from collections import defaultdict, Counter
 import numpy as np
@@ -39,14 +39,15 @@ class Simulation:
 
 	def move_until_fail(self):
 		planner = self.planner
-		assignments = planner.iterate()
+		assignments = planner.run()
 		self.assignments = assignments
+		# print(self.assignments)
 		self.nonhelpers = planner.buyers.copy()
 		self.helpers = planner.sellers.copy()
 		# print("Sellers", self.helpers)
 		# print("Nonhelpers", self.nonhelpers)
 		if not self.nonhelpers:
-			return None, None, None, None
+			return None, None, None
 		# print(assignments)
 		helpers = self.helpers.copy()
 		for a in helpers:
@@ -156,24 +157,30 @@ class Simulation:
 		self.help_cost = help_cost
 		self.total_success = total_success
 		self.total_fail = total_fail
-		return grid, cost, total_u, total_fail
+		return grid, cost, total_u
 
 
 def runSims(assignonly=False):
+	greedy_u = []
 	iter_auc_u = []
 	opt_u = []
 	nosell_u = []
 
+	greedy_costs = []
 	iter_auc_costs = []
 	opt_costs = []
 	nosell_costs = []
 
 	diff_opt_nosell = []
 	diff_iter_nosell = []
+	diff_greedy_nosell = []
 
+	costdiff_greedy_nosell = []
 	costdiff_iter_nosell = []
 	costdiff_opt_nosell = []
 
+	greedy_total_success = []
+	greedy_total_fail = []
 	iter_total_success = []
 	iter_total_fail = []
 	opt_total_success = []
@@ -181,74 +188,104 @@ def runSims(assignonly=False):
 	nosell_total_success = []
 	nosell_total_fail = []
 
+	greedy_help_costs = []
 	iter_help_costs = []
+	opt_help_costs = []
 
+	successdiff_greedy_nosell = []
 	successdiff_iter_nosell = []
 	successdiff_opt_nosell = []
+	faildiff_greedy_nosell = []
 	faildiff_iter_nosell = []
 	faildiff_opt_nosell = []
 	
 	i = 0
-	while i < 50:
+	while i < 100:
 		print(i)
 		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
 		env.getEnv()
-		iter_auc = IterativeAuction(env) 
-		sim1 = Simulation(iter_auc)
-		revealed_grid, cost_it, total_u_it, total_fail_it = sim1.move_until_fail()
+		opt_assign = OptimalBaseline(env) 
+		sim1 = Simulation(opt_assign)
+		revealed_grid, cost_opt, total_u_opt = sim1.move_until_fail()
+		# print(revealed_grid)
 		if assignonly and not sim1.assignments: #if we want to compare envs with assignments but get none move to next
 			continue
-		else:
-			i += 1
-
+		
 		if revealed_grid is not None:
-			iter_auc_u.append(total_u_it)
-			iter_auc_costs.append(cost_it)
-			sellers = iter_auc.sellers
-			buyers = iter_auc.buyers
-			iter_help_costs.append(sim1.help_cost)
-			iter_total_success.append(sim1.total_success)
-			iter_total_fail.append(sim1.total_fail)
-
-			# print("Beginning Optimal")
-			opt_assign = OptimalBaseline(env, sellers, buyers) 
-			sim2 = Simulation(opt_assign, revealed_grid)
-			_, cost_opt, total_u_opt, total_fail_opt = sim2.move_until_fail()
+			i += 1
 			opt_u.append(total_u_opt)
 			opt_costs.append(cost_opt)
-			opt_total_success.append(sim2.total_success)
-			opt_total_fail.append(sim2.total_fail)
+			opt_help_costs.append(sim1.help_cost)
+			opt_total_success.append(sim1.total_success)
+			opt_total_fail.append(sim1.total_fail)
+
+			sellers = opt_assign.sellers
+			buyers = opt_assign.buyers
+
+			# print("Beginning Greedy")
+			greedy = Greedy(env, sellers, buyers) 
+			sim2 = Simulation(greedy, revealed_grid)
+			_, cost_greedy, total_u_greedy = sim2.move_until_fail()
+			greedy_u.append(total_u_greedy)
+			greedy_costs.append(cost_greedy)
+			greedy_help_costs.append(sim2.help_cost)
+			greedy_total_success.append(sim2.total_success)
+			greedy_total_fail.append(sim2.total_fail)
+
+			# print("Beginning Iterative Auction")
+			iter_auc = IterativeAuction(env, sellers, buyers) 
+			sim3 = Simulation(iter_auc, revealed_grid)
+			_, cost_it, total_u_it = sim3.move_until_fail()
+			iter_auc_u.append(total_u_it)
+			iter_auc_costs.append(cost_it)
+			iter_help_costs.append(sim3.help_cost)
+			iter_total_success.append(sim3.total_success)
+			iter_total_fail.append(sim3.total_fail)
 			# print("End of optimal")
 			
-
+			# print("Beginning Nosell")
 			sellers = []
 			buyers = iter_auc.agents
 			iter_auc = IterativeAuction(env, sellers, buyers) 
-			sim3 = Simulation(iter_auc, revealed_grid)
-			_, cost_nosell, total_u_nosell, total_fail_nosell = sim3.move_until_fail()
+			sim4 = Simulation(iter_auc, revealed_grid)
+			_, cost_nosell, total_u_nosell = sim4.move_until_fail()
 			nosell_u.append(total_u_nosell)
 			nosell_costs.append(cost_nosell)
-			nosell_total_success.append(sim3.total_success)
-			nosell_total_fail.append(sim3.total_fail)
+			nosell_total_success.append(sim4.total_success)
+			nosell_total_fail.append(sim4.total_fail)
 
+			diff_greedy_nosell.append(total_u_greedy - total_u_nosell)
 			diff_iter_nosell.append(total_u_it - total_u_nosell)
 			diff_opt_nosell.append(total_u_opt - total_u_nosell)
 			
+			successdiff_greedy_nosell = np.subtract(np.array(greedy_total_success), np.array(nosell_total_success))
 			successdiff_iter_nosell = np.subtract(np.array(iter_total_success), np.array(nosell_total_success))
 			successdiff_opt_nosell = np.subtract(np.array(opt_total_success), np.array(nosell_total_success))
+			faildiff_greedy_nosell = np.subtract(np.array(greedy_total_fail), np.array(nosell_total_fail))
 			faildiff_iter_nosell = np.subtract(np.array(iter_total_fail), np.array(nosell_total_fail))
 			faildiff_opt_nosell = np.subtract(np.array(opt_total_fail), np.array(nosell_total_fail))
 
+			costdiff_greedy_nosell = np.subtract(np.array(greedy_costs), np.array(nosell_costs))
 			costdiff_iter_nosell = np.subtract(np.array(iter_auc_costs), np.array(nosell_costs))
 			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
 
+
+	print("Greedy U", greedy_u)
+	print("Iter Auc U", iter_auc_u)
+	print("Opt U", opt_u)
+
+	print("Diff greedy nosell", diff_greedy_nosell)
 	print("Diff iter nosell", diff_iter_nosell)
 	print("Diff opt nosell", diff_opt_nosell)
 
+	print("Help Cost Greedy", greedy_help_costs)
+	print("Greedy Costs", greedy_costs)
 	print("Help Cost Iter", iter_help_costs)
 	print("Iter Auc Costs", iter_auc_costs)
 	print("Nosell Costs", nosell_costs)
 
+	print("Greedy Fails", greedy_total_fail)
+	print("Greedy Successes", greedy_total_success)
 	print("Iter Auc Fails", iter_total_fail)
 	print("Iter Auc Successes", iter_total_success)
 	print("Opt Fails", opt_total_fail)
@@ -256,35 +293,44 @@ def runSims(assignonly=False):
 	print("Nosell Fails", nosell_total_fail)
 	print("Nosell Successes", nosell_total_success)
 
+	avg_diff_success_greedy_nosell = np.mean(successdiff_greedy_nosell)
 	avg_diff_success_iter_nosell = np.mean(successdiff_iter_nosell)
 	avg_diff_success_opt_nosell = np.mean(successdiff_opt_nosell)
+	print("Average Diff Success Greedy Nosell", avg_diff_success_greedy_nosell)
 	print("Average Diff Success Iter Nosell", avg_diff_success_iter_nosell)
 	print("Average Diff Success Opt Nosell", avg_diff_success_opt_nosell)
 
 
+	avg_diff_greedy_nosell = mean(diff_greedy_nosell)
 	avg_diff_iter_nosell = mean(diff_iter_nosell)
 	avg_diff_opt_nosell = mean(diff_opt_nosell)
+	avg_greedy_help_costs = mean(greedy_help_costs)
 	avg_iter_help_costs = mean(iter_help_costs)
+	print("Average U Diff Greedy vs Nosell", avg_diff_greedy_nosell)
 	print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell)
 	print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell)
 
+	avg_costdiff_greedy_nosell = np.mean(costdiff_greedy_nosell)
 	avg_costdiff_iter_nosell = np.mean(costdiff_iter_nosell)
 	avg_costdiff_opt_nosell = np.mean(costdiff_opt_nosell)
 	print("Average Help Costs Iter Auc", avg_iter_help_costs)
+	print("Average Help Costs Greedy", avg_greedy_help_costs)
+	print("Average Cost Diff Greedy vs Nosell", avg_costdiff_greedy_nosell)
 	print("Average Cost Diff Iterauc vs Nosell", avg_costdiff_iter_nosell)
 	print("Average Cost Diff Opt vs Nosell", avg_costdiff_opt_nosell)
 
 
 	#Visualize Expected U Difference
 
+	diff_greedy_nosell_error = stdev(diff_greedy_nosell)
 	diff_iter_nosell_error = stdev(diff_iter_nosell)
 	diff_opt_nosell_error = stdev(diff_opt_nosell)
-	eu_error = [diff_iter_nosell_error, diff_opt_nosell_error]
+	eu_error = [diff_greedy_nosell_error, diff_iter_nosell_error, diff_opt_nosell_error]
 
-	labels = ["Iter Auction vs No Exchange", "Optimal vs No Exchange"]
+	labels = ["Greedy vs No Exchange", "Iter Auction vs No Exchange", "Optimal vs No Exchange"]
 	x_pos = np.arange(len(labels))
-	ys = [avg_diff_iter_nosell, avg_diff_opt_nosell]
-	fig, ax = plt.subplots()
+	ys = [avg_diff_greedy_nosell, avg_diff_iter_nosell, avg_diff_opt_nosell]
+	fig, ax = plt.subplots(figsize=(9,6))
 	ax.bar(x_pos, ys,
 		yerr=eu_error,
 		align='center',
@@ -298,27 +344,28 @@ def runSims(assignonly=False):
 	ax.yaxis.grid(True)
 
 	# Save the figure and show
-	plt.tight_layout()
 	plt.savefig('eu-diff.png')
 	plt.show()
 
 
 	#Visualize Expected U for each setting
 
+	avg_greedy_u = mean(greedy_u)
 	avg_iter_u = mean(iter_auc_u)
 	avg_opt_u = mean(opt_u)
 	avg_nosell_u = mean(nosell_u)
 
+	greedy_u_error = stdev(greedy_u)
 	iter_u_error = stdev(iter_auc_u)
 	opt_u_error = stdev(opt_u)
 	nosell_u_error = stdev(nosell_u)
 
-	eu_error = [nosell_u_error, iter_u_error, opt_u_error]
+	eu_error = [nosell_u_error, greedy_u_error, iter_u_error, opt_u_error]
 
-	labels = ["No Info Exchange", "Iterative Auction", "Optimal Exchange"]
+	labels = ["No Info Exchange", "Greedy Assignment", "Iterative Auction", "Optimal Assignment"]
 	x_pos = np.arange(len(labels))
-	ys = [avg_nosell_u, avg_iter_u, avg_opt_u]
-	fig, ax = plt.subplots()
+	ys = [avg_nosell_u, avg_greedy_u, avg_iter_u, avg_opt_u]
+	fig, ax = plt.subplots(figsize=(9,6))
 	ax.bar(x_pos, ys,
 		yerr=eu_error,
 		align='center',
@@ -338,16 +385,17 @@ def runSims(assignonly=False):
 
 	#Visualize Successs/Fails
 
-	success_means = (mean(nosell_total_success), mean(iter_total_success), mean(opt_total_success))
-	success_std = (stdev(nosell_total_success), stdev(iter_total_success), stdev(opt_total_success))
-	fail_means = (mean(nosell_total_fail), mean(iter_total_fail), mean(opt_total_fail))
-	fail_std = (stdev(nosell_total_fail), stdev(iter_total_fail), stdev(opt_total_fail))
+	success_means = (mean(nosell_total_success), mean(greedy_total_success), mean(iter_total_success), mean(opt_total_success))
+	success_std = (stdev(nosell_total_success), stdev(greedy_total_success), stdev(iter_total_success), stdev(opt_total_success))
+	fail_means = (mean(nosell_total_fail), mean(greedy_total_fail), mean(iter_total_fail), mean(opt_total_fail))
+	fail_std = (stdev(nosell_total_fail), stdev(greedy_total_fail), stdev(iter_total_fail), stdev(opt_total_fail))
 
 	# the x locations for the groups
-	ind = np.arange(3)    
+	ind = np.arange(4)    
 	# the width of the bars
 	width = 0.55     
 
+	plt.figure(figsize=(9,6))
 	p1 = plt.bar(ind, success_means, width, yerr=success_std, color='green')
 	p2 = plt.bar(ind, fail_means, width,
 	bottom=success_means, yerr=fail_std, color='red')
@@ -355,7 +403,7 @@ def runSims(assignonly=False):
 	plt.ylabel('Fail/Success Split')
 	plt.xlabel('Setting')
 	# plt.title('Scores by group\n' + 'and gender')
-	plt.xticks(ind, ('No information exchange', 'Iterative Auction', 'Optimal Allocation'))
+	plt.xticks(ind, ('No information exchange', 'Greedy Allocation', 'Iterative Auction', 'Optimal Allocation'))
 	plt.yticks(np.arange(0, 5, 1))
 	plt.legend((p1[0], p2[0]), ('Successes', 'Failures'))
 
@@ -364,20 +412,22 @@ def runSims(assignonly=False):
 
 	#Visualize Cost for each Setting
 
+	avg_greedy_cost = mean(greedy_costs)
 	avg_iter_auc_cost = mean(iter_auc_costs)
 	avg_opt_cost = mean(opt_costs)
 	avg_nosell_cost = mean(nosell_costs)
 
+	greedy_cost_error = stdev(greedy_costs)
 	iter_cost_error = stdev(iter_auc_costs)
 	opt_cost_error = stdev(opt_costs)
 	nosell_cost_error = stdev(nosell_costs)
 
-	eu_error = [nosell_cost_error, iter_cost_error, opt_cost_error]
+	eu_error = [nosell_cost_error, greedy_cost_error, iter_cost_error, opt_cost_error]
 
-	labels = ["No Info Exchange", "Iterative Auction", "Optimal Exchange"]
+	labels = ["No Info Exchange", "Greedy Assignment", "Iterative Auction", "Optimal Assignment"]
 	x_pos = np.arange(len(labels))
-	ys = [avg_nosell_cost, avg_iter_auc_cost, avg_opt_cost]
-	fig, ax = plt.subplots()
+	ys = [avg_nosell_cost, avg_greedy_cost, avg_iter_auc_cost, avg_opt_cost]
+	fig, ax = plt.subplots(figsize=(9,6))
 	ax.bar(x_pos, ys,
 		yerr=eu_error,
 		align='center',

@@ -11,7 +11,6 @@ import random
 import matplotlib.pyplot as plt
 import itertools
 
-#Class to represent a graph 
 class OptimalBaseline: 
 
 	def __init__(self, env, sellers=None, buyers=None):
@@ -22,15 +21,17 @@ class OptimalBaseline:
 		self.dests = env.dests
 		self.rewards = env.rewards
 		self.agent_val = {}
-		self.values = np.zeros(self.grid.shape)
-		self.costs = defaultdict(list)
-		self.waypoints = None
-		self.paths = []
+		self.values = {}
+		self.costs = {}
+		self.waypoints = []
+		self.waypt_prices = {}
+		self.paths = defaultdict(list)
 		self.utilities = []
 		self.surplus = []
 		self.assignments = defaultdict(list) # agent start pos: waypoint assigned
 		self.sellers = sellers
 		self.buyers = buyers
+		self.iterations = 0
 
 	# A utility function to find the 
 	# vertex with minimum dist value, from 
@@ -46,6 +47,18 @@ class OptimalBaseline:
 				max_index = (i,j)
 
 		return max_index 
+
+	def minDistance(self,dist,queue): 
+		# Initialize min value and min_index as -1 
+		minimum = float("Inf") 
+		min_index = -1
+
+		for (i,j) in queue:
+			if dist[i][j][0] <= minimum:
+				minimum = dist[i][j][0] 
+				min_index = (i,j)
+
+		return min_index 
 
 
 	# Function to print shortest path 
@@ -110,8 +123,7 @@ class OptimalBaseline:
 			if pt[0] >= 0 and pt[1] >= 0 and pt[0] <= self.rows-1 and pt[1] <= self.cols-1:
 				ptlist.append(pt)
 		return list(set(ptlist))
-
-
+	
 	def dijkstra(self, grid, src, dest, reward, start_prob=1, start_cost=0, start_steps=0): 
 
 		row = self.rows
@@ -178,21 +190,6 @@ class OptimalBaseline:
 					dist[p[0]][p[1]] = (cost, prob, steps, utility)
 					parent[p[0]][p[1]] = u 
 					queue.append(p)
-					# print(u)
-					# print(p, "\n")
-					# print(dist, "\n")
-
-				# if p in queue: 
-				# 	print(dist[u[0]][u[1]][0])
-				# 	print(dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1))
-				# 	print(dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*dest_reward)
-				# 	print()
-				# 	if dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1) + dist[u[0]][u[1]][1]*(1-grid[p[0]][p[1]])*dest_reward> dist[p[0]][p[1]][0]: 
-				# 		cost = dist[u[0]][u[1]][0] + dist[u[0]][u[1]][1]*grid[p[0]][p[1]]*(dist[u[0]][u[1]][2]+1)
-				# 		prob = dist[p[0]][p[1]][1] * (1-grid[p[0]][p[1]])
-				# 		steps = dist[u[0]][u[1]][2]+1
-				# 		dist[p[0]][p[1]] = (cost, prob, steps)
-				# 		parent[p[0]][p[1]] = u 
 
 			# print(*dist, sep="\n")
 			# print()
@@ -201,68 +198,92 @@ class OptimalBaseline:
 		# print()
 
 		# self.printSolution(src,dist,parent)
+		if dist[dest[0]][dest[1]][3] == -float("inf"):
+			return self.getPath(parent,dest[0], dest[1], src, []), None, dist[dest[0]][dest[1]][1], dist[dest[0]][dest[1]][0], dist[dest[0]][dest[1]][2]
 		return self.getPath(parent,dest[0], dest[1], src, []), dist[dest[0]][dest[1]][3], dist[dest[0]][dest[1]][1], dist[dest[0]][dest[1]][0], dist[dest[0]][dest[1]][2]
 
 	def getAllPaths(self):
 		for i in range(len(self.agents)):
 			path, best_u, cum_prob,_,_ = self.dijkstra(self.grid,self.agents[i],self.dests[i],self.rewards[i]) 
-			self.paths.append(path)
+			self.paths[self.agents[i]] = path
 			self.utilities.append(best_u)
 
-	def fail_path_cost(self, grid, path, fail_pt):
+	def getAllWaypoints(self):
+		for i in range(len(self.grid)):
+			for j in range(len(self.grid[i])):
+				if self.grid[i][j] < 1 and self.grid[i][j] > 0:
+					self.waypoints.append((i,j))
+					self.waypt_prices[(i,j)] = 0
+
+	def base_path_util_winfo(self, grid, path, reward):
 		expected_u = 0
 		cum_prob = 1
 		num_steps = 0
+		complete = True
 		for p in path:
 			if grid[p[0]][p[1]] == 1: #blocked
-				expected_u += cum_prob * (num_steps + 1)
+				expected_u -= cum_prob * (num_steps + 1)
+				complete = False
+				break
 			elif grid[p[0]][p[1]] < 1 and grid[p[0]][p[1]] > 0: #unknown
-				expected_u += cum_prob*grid[p[0]][p[1]]*(num_steps +1)
+				expected_u -= cum_prob*grid[p[0]][p[1]]*(num_steps +1)
 				cum_prob *= (1-grid[p[0]][p[1]])
 				num_steps += 1
 			else: #free
 				num_steps += 1
+		if complete:
+			expected_u += cum_prob * (reward-num_steps)
 		return expected_u
 
 
-	def waypointValues(self, grid, src, dest, reward, base_u, base_path):
-		value = [[0 for j in range(self.cols)] for i in range(self.rows)]
-		for i in range(len(grid)):
-			for j in range(len(grid)):
-				if grid[i][j]>0 and grid[i][j]<1:
-					# print("Potential Waypoint:", (i,j))
-					prob_blocked = grid[i][j]
-					prob_free = 1 - prob_blocked
+	def getAllFreePossibilities(self, bundle):
+		combs = []
+		flags = [False] * len(bundle)
+		while True:
+			a = [bundle[i] for i, flag in enumerate(flags) if flag]
+			b = [bundle[i] for i, flag in enumerate(flags) if not flag]
+			if a or b:
+				combs.append((a, b))
+			for i in range(len(bundle)):
+				flags[i] = not flags[i]
+				if flags[i]:
+					break
+			else:
+				break
+		return combs
 
-					grid[i][j] = 0
-					path, free_u, prob,_,_ = self.dijkstra(grid, src, dest, reward)
-					free_diff = free_u - base_u
-					# print("Src", src)
-					# print("Dest", dest)
-					# print("Reward", reward)
-					# print("Waypoint:", (i,j))
-					# print("Free Path: ", path)
-					# print("Free U: ", free_u)
-					# print("Free Diff:", free_diff)
-					grid[i][j] = 1
-					pathb, blocked_u, prob_b,_,_ = self.dijkstra(grid, src, dest, reward)
-					blocked_diff = blocked_u - base_u
-					if (i,j) in base_path:
-						fail_cost = self.fail_path_cost(grid, base_path, (i,j))
-						blocked_diff = blocked_u + fail_cost
-					# print("Blocked Path: ", pathb)
-					# print("Blocked U: ", blocked_u)
-					# print("Blocked Diff:", blocked_diff)
+	def bundleValue(self, agent, bundle):
+		combs = self.getAllFreePossibilities(bundle)
+		# print("Agent", agent)
+		# print("Combs", combs)
+		total_value = 0
+		base_path = self.paths[agent]
+		for c in combs:
+			grid = self.grid.copy()
+			free = c[0]
+			blocked = c[1]
+			prob = 1
+			for p in free:
+				prob *= (1-grid[p[0]][p[1]])
+				grid[p[0]][p[1]] = 0
+			for p in blocked:
+				prob *= grid[p[0]][p[1]]
+				grid[p[0]][p[1]] = 1
+			
+			path, utility, prob,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
+			if utility is None:
+				utility = 0
+			# print("Path w/ Info", c, path)
+			# print("Base Path", base_path)
+			if self.utilities[self.agents.index(agent)] is None:
+				base_u = 0
+			else:
+				base_u = self.base_path_util_winfo(grid, base_path, self.rewards[self.agents.index(agent)])
+			# print("Utility w/ Info", utility)
+			# print("Base Path U under info", base_u)
 
-					pt_val = prob_free * free_diff + prob_blocked * blocked_diff
-
-					value[i][j] = max(pt_val, 0)
-					# print("Value of", (i,j), "is", value[i][j])
-					if value[i][j] > 0:
-						self.waypoints.append((i,j))
-					grid[i][j] = prob_blocked
-
-		return value
+			total_value += prob * (utility - base_u)
+		return total_value
 
 	def waypointCost(self, grid, src, dest, waypts, reward, base_u):
 		# print("Waypoints:", waypts)
@@ -273,6 +294,8 @@ class OptimalBaseline:
 		cum_path = []
 		for w in waypts:
 			path1, utility, prob, temp_cost, num_steps = self.dijkstra(grid,src,w,reward, cum_prob, cum_cost, cum_steps)
+			if utility is None:
+				return float('inf'), cum_path
 			help_u += utility
 			cum_path += path1
 			cum_prob = prob
@@ -280,6 +303,8 @@ class OptimalBaseline:
 			cum_steps = num_steps
 
 		path, final_u, prob,_,_ = self.dijkstra(grid,waypts[-1],dest,reward, cum_prob, cum_cost, cum_steps)
+		if final_u is None:
+				return float('inf'), cum_path
 		cum_path += path
 		help_u = final_u
 		# print("Src", src)
@@ -288,18 +313,6 @@ class OptimalBaseline:
 		# print("Utility of path through waypoints:", help_u)
 		cost = base_u - help_u
 		# print("Cost: ", cost)
-		# if cost < 0:
-		# 	print(self.grid)
-		# 	print("Source:", src)
-		# 	print("Dest:", dest)
-		# 	print("Waypts", waypts)
-		# 	print("Reward:", reward)
-		# 	print("Base Path", self.paths[self.agents.index(src)])
-		# 	print("Base U:", base_u)
-		# 	print("Help path", cum_path)
-		# 	print("Help_U", help_u)
-		# 	print("Cost", cost)
-		# 	raise Exception("Negative Cost!")
 		return cost, cum_path
 
 
@@ -311,69 +324,46 @@ class OptimalBaseline:
 		self.sellers = list(sellers) 
 		# print("Buyers", self.buyers, "Sellers", self.sellers)
 
-
-	def getAllValues(self):
-		self.waypoints = []
-		for i in range(len(self.buyers)):
-			# print()
-			# print("Buyer:", self.buyers[i])
-			value = self.waypointValues(self.grid,self.buyers[i],self.dests[self.agents.index(self.buyers[i])],self.rewards[self.agents.index(self.buyers[i])],self.utilities[self.agents.index(self.buyers[i])], self.paths[self.agents.index(self.buyers[i])])
-			self.agent_val[self.agents[i]] = value
-			self.values = np.add(self.values, value)
-		# print("From getallvalues", self.waypoints)
-		# print("From getallvalues", self.values)
-		self.waypt_prices = {}
-		for w in self.waypoints:
-			if self.values[w[0]][w[1]]>0:
-				self.waypt_prices[w] = self.values[w[0]][w[1]]
-		waypoints = list(self.waypt_prices.keys())
-		self.waypoints= []
-		for i in range(len(waypoints)):
-			self.waypoints.append([waypoints[i]])
-			for j in range(len(waypoints)):
-				if i != j:
-					self.waypoints.append([waypoints[i], waypoints[j]])
-		# print(self.waypoints)
+	def getWaypointCosts(self):
+		self.costs = {} # for each waypoint, cost to each agent
+		for i in range(len(self.waypoints)):
+			w = self.waypoints[i]
+			self.costs[w] = {}
+			for a in range(len(self.sellers)):
+				cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+				seller = self.sellers[a]
+				self.costs[w][seller] = cost
+				# print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost)
+		# print(self.costs)
 		
-
 	def assign(self):
 		nums = list(range(len(self.waypoints))) + [-1]
 		combs = list(itertools.product(nums, repeat=len(self.sellers)))
-		print(combs)
+		# print("Combs", combs)
 		best_profit = -float("Inf")
 		best_assignment = None
 		for c in combs:
 			perms = list(itertools.permutations(c))
 			for p in perms:
 				bundles = []
-				pts_union = []
+				pts_union = set()
 				for i in p:
 					if i == -1:
 						bundles.append((-1, -1))
 					else:
 						bundles.append(self.waypoints[i])
-						pts_union += self.waypoints[i]
-				pts_union = list(set(pts_union))
+						pts_union.add(self.waypoints[i])
+				pts_union = list(pts_union)
 				total_cost = 0
 				# print(bundles)
-				# print(pts_union)
 				for i in range(len(bundles)):
 					b = bundles[i]
 					if b != (-1, -1):
-						cost, _ = self.waypointCost(self.grid,self.sellers[i],self.dests[self.agents.index(self.sellers[i])],b,self.rewards[self.agents.index(self.sellers[i])],self.utilities[self.agents.index(self.sellers[i])])
-						# print("Seller", self.sellers[i], "Waypoint", b, "Cost", cost)
-						total_cost += cost
-						# if len(b) == 2:
-						# 	pts_union.add(b[0])
-						# elif len(b) == 4:
-						# 	pts_union.add(b[0])
-						# 	pts_union.add(b[1])
-				
+						total_cost += self.costs[b][self.sellers[i]]
 				total_value = 0
-				for pt in pts_union:
-					x = int(pt[0])
-					y = int(pt[1])
-					total_value += self.values[x][y]
+				for b in self.buyers:
+					total_value += self.bundleValue(b, pts_union)
+
 				profit = total_value - total_cost
 				if profit > best_profit:
 					best_profit = profit
@@ -383,44 +373,30 @@ class OptimalBaseline:
 			w_index = best_assignment[i]
 			if w_index != -1:
 				w = self.waypoints[w_index]
-				self.assignments[self.sellers[i]] = w
+				self.assignments[self.sellers[i]] = [w] # note - designed for singleton case
 		# print("Best Profit", best_profit)
 		#TODO: ensure the costs, etc. reported match what iterauc gives
 
-
-
-
-	def iterate(self):
+	def run(self):
 		start = time.time()
 		self.getAllPaths()
+		# print("Utilities:", self.utilities)
+		# for i in range(len(self.agents)):
+		# 	print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
 		if self.sellers is None:
 			self.random_buyer_seller()
-		# print("Buyers", self.buyers)
-		# print("Sellers", self.sellers)
-		self.getAllValues()
-		# print("Paths: ", self.paths)
-		# print("Values: ", self.values)
-		# print("Waypoint starting prices", self.waypt_prices)
-		# print("Costs: ", self.costs)
+		self.getAllWaypoints()
+		self.getWaypointCosts()
+		# print("Paths: ", np.array(self.paths))
 		# print("Waypoints: ", self.waypoints)
 		self.assign()
 		# print("Assignments: ", self.assignments)
 		end = time.time()
 		# print("Elapsed time: ", end-start)
 		return self.assignments
-
-	def visualize_surplus(self):
-		iterations = list(range(1,len(self.surplus)+1))
-		surplus = self.surplus
-		plt.plot(iterations, surplus)
-		plt.title('Surplus Over Market Execution')
-		plt.xlabel('Number of Iterations')
-		plt.ylabel('Surplus')
-		plt.savefig('Surplus.png')
-		plt.show()
 		
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 	# grid = [[0,0,0,0,0.5],
 	# 		[0,0,0,1,1],
 	# 		[0,1,0.5,0,1],
@@ -429,15 +405,19 @@ class OptimalBaseline:
 	# env = EnvGenerator(5,5,2,0.6,0.2,0.2,10,np.array(grid),[(0,0), (1,1), (4,3)], [(4,4), (2,3), (4,2)], [10,10,10])
 	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10)
 	# env.getEnv()
-	# grid = [[0.,  0.,  0.,  0.,  0. ],
- 	# 		[0.,  0.5, 0.,  0.,  0. ],
- 	# 		[0.,  0.,  1.,  1.,  0. ],
- 	# 		[0.,  0.5, 0.,  0.,  0.5],
- 	# 		[0.,  0.,  0.,  0.,  0. ]]
-	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(4, 3), (3, 3), (4, 0), (1, 0)], [(1, 2), (1, 3), (3, 2), (1, 4)], [2, 1, 8, 8])
-	# g= OptimalBaseline(env, [(3, 3), (4, 3), (4, 0)], [(1, 0)]) 
-	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
-	# g.iterate()
+
+	# Presentation Example
+	grid = [[0.5, 0.,  1.,  0.,  0. ],
+			[0.,  0.5, 1.,  0.,  0. ],
+			[0.5, 1.,  0.5, 0.,  0.5],
+			[0.5, 0.,  0.5, 0.,  0. ],
+			[1.,  0.,  0.,  0.,  0.5]]
+
+	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (3, 3)], [25, 25, 25, 25])
+	g = OptimalBaseline(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	# print(g.agents[2])
+	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
+	g.run()
 
 	# grid = [[0,0,0],
 	# 		[0,0.5,0],
@@ -453,3 +433,5 @@ class OptimalBaseline:
 
 
 # https://www.geeksforgeeks.org/printing-paths-dijkstras-shortest-path-algorithm/
+
+

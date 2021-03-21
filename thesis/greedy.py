@@ -10,11 +10,11 @@ from collections import defaultdict
 import random
 import matplotlib.pyplot as plt
 import math
-import pickle
+import sys
 
 #Class to represent a graph 
 
-class IterativeAuction: 
+class Greedy: 
 
 	def __init__(self, env, sellers=None, buyers=None):
 		self.grid = env.grid
@@ -312,7 +312,7 @@ class IterativeAuction:
 		for w in waypts:
 			path1, utility, prob, temp_cost, num_steps = self.dijkstra(grid,src,w,reward, cum_prob, cum_cost, cum_steps)
 			if utility is None:
-				return float('inf'), cum_path
+				return None, cum_path
 			help_u += utility
 			cum_path += path1
 			cum_prob = prob
@@ -321,7 +321,7 @@ class IterativeAuction:
 
 		path, final_u, prob,_,_ = self.dijkstra(grid,waypts[-1],dest,reward, cum_prob, cum_cost, cum_steps)
 		if final_u is None:
-				return float('inf'), cum_path
+				return None, cum_path
 		cum_path += path
 		help_u = final_u
 		# print("Src", src)
@@ -340,146 +340,113 @@ class IterativeAuction:
 		self.buyers = list(set(self.agents) - sellers)
 		self.sellers = list(sellers) 
 		# print("Buyers", self.buyers, "Sellers", self.sellers)
-		
 
-	def getSupply(self):
-		new_assignments = defaultdict(list)
-		supply = []
-		total_cost = 0
-		self.costs = {}
-		# print("Sellers", self.sellers)
-		# print("Waypoints:", self.waypoints)
-		#Get provisional best assignment for each helper agent:
-		for a in range(len(self.sellers)):
-			best_profit = 0
-			best_cost = float("Inf")
-			best_bundle = None
-			for i in range(len(self.waypoints)):
-				w = self.waypoints[i]
-				cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
-				profit = self.waypt_prices[w] - cost
-				# print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost, "Profit", profit)
-				if profit >= best_profit: # TODO: fix this to be profit --> compare to optimal
-					best_profit = profit
-					best_cost = cost
-					best_bundle = [w]
-			# print("Agent", self.sellers[a], "Cost", best_cost, "Bundle", best_bundle)
-			if best_bundle is not None:
-				new_assignments[self.sellers[a]] += best_bundle
-				supply += new_assignments[self.sellers[a]]
-				self.costs[self.sellers[a]] = best_cost
-				total_cost += best_cost
-		return new_assignments, supply
-
-	def getDemand(self, prov_alloc):
-		demand = []
+	def getWaypointValues(self, prov_alloc):
+		self.values = {}
 		for w in self.waypoints:
 			value = 0
 			for b in self.buyers:
 				value += self.waypointValue(b, w, prov_alloc)
 			self.values[w] = value
 			# print("Value of", w, "is", value)
-			if value >= self.waypt_prices[w]:
-				demand.append(w)
-		return demand
 
-	def iterative_market(self, eta):
-		# print("Prices", self.waypt_prices)
-		old_surplus = None
-		if self.waypoints == []:
-			return 
-		iterations = 0
-		
-		prev_prices = []
-		prov_alloc = []
-		while True:
-			iterations += 1
-			# print("assignments", self.assignments, "\n")
-			new_assignments, supply = self.getSupply()
-			demand = self.getDemand(prov_alloc)
-			# print("Supply assignments", new_assignments)
-			# print("Demand", demand)
-			# print(self.waypoints)
-			# print("Supply", supply)
-			intersect = list(set(demand).intersection(set(supply)))
-			excess_demand = list((Counter(demand) - Counter(intersect)).elements())
-			excess_supply = list((Counter(supply) - Counter(intersect)).elements())
-			# print("Intersect", intersect)
-			surplus_pts = excess_demand + excess_supply
-			total_cost = 0
-			keys = list(new_assignments.keys())
-			for h in keys:
-				if new_assignments[h][0] in intersect: # only works for singleton assignments
-					total_cost += self.costs[h]
+	def getWaypointCosts(self):
+		self.costs = {} # for each waypoint, cost to each agent
+		for i in range(len(self.waypoints)):
+			w = self.waypoints[i]
+			self.costs[w] = {}
+			for a in range(len(self.sellers)):
+				cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+				seller = self.sellers[a]
+				self.costs[w][seller] = cost
+				# print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost)
+		# print(self.costs)
+
+	def assign(self, prov_alloc):
+		c = []
+		b_ub = []
+		A_ub = []
+		prohibited_dec_vars = []
+		for k in range(len(self.remaining_sellers)): # row
+			for w in range(len(self.waypoints)): # column
+				# print(self.costs[self.waypoints[w]][k])
+				# print(self.values[i][j])
+				# print(self.values[self.waypoints[w]])
+				if self.costs[self.waypoints[w]][self.remaining_sellers[k]] is None:
+					c.append(0 - self.values[self.waypoints[w]])
+					prohibited_dec_vars.append(k * len(self.waypoints) + w)
 				else:
-					del new_assignments[h]
-			# print("New assignment", new_assignments)
-			# print("Excess Demand", excess_demand)
-			# print("Excess Supply", excess_supply)
-			surplus_value = 0
-			for p in intersect:
-				surplus_value += self.values[p]
-			# print("Total value", surplus_value)
-			# print("Total Cost", total_cost)
-			surplus_value -= total_cost
-			self.surplus.append(surplus_value) #TODO: graph this
-			# if surplus_value == 0:
-			# 	break
-			# print("Surplus Value", surplus_value)
-			# print("New Assignments", new_assignments)
-			
-			#update prices
-			for p in surplus_pts:
-				if p in excess_supply:
-					newprice = self.waypt_prices[p] - (eta*excess_supply.count(p))
-					if newprice != self.waypt_prices[p]:
-						self.waypt_prices[p] = newprice
-				elif p in excess_demand:
-					newprice = self.waypt_prices[p] + (eta*excess_demand.count(p))
-					if newprice != self.waypt_prices[p]:
-						self.waypt_prices[p] = newprice
-			# print("Updated prices", self.waypt_prices)
-			if old_surplus is None or surplus_value >= old_surplus: 
-				old_surplus = surplus_value
-				self.assignments = new_assignments
-			if self.waypt_prices in prev_prices: #if same prices ever repeated, detect cycle and break; change price update size to be by an additive constant --> will terminate
-				break
-			prev_prices.append(self.waypt_prices)
-			prov_alloc = intersect
+					c.append(self.costs[self.waypoints[w]][self.remaining_sellers[k]] - self.values[self.waypoints[w]])
+		if c == []:
+			return False
+		b_ub.append(1)
+		A_ub = [[1] * len(c)]
+		# print(prohibited_dec_vars)
+		# print(len(c))
+		for i in range(len(prohibited_dec_vars)): #take care of sellers with infinite cost
+			b_ub.append(0)
+			new_constraint = [0] * len(c)
+			new_constraint[prohibited_dec_vars[i]] = 1
+			A_ub.append(new_constraint)
+		# print(c)
+		# print(b_ub)
+		# print(A_ub)
+		res = optimize.linprog(
+			c = c, 
+			A_ub=A_ub, 
+			b_ub=b_ub,
+			bounds=(0,1),
+			method='simplex'
+			)
+		# print(res)
+		found = False
+		assigned_waypt = None
+		assigned_seller = None
+		for i in range(len(res.x)):
+			if res.x[i] == 1:
+				found = True
+				k = int(i // len(self.waypoints))
+				w = int(i % len(self.waypoints))
+				self.assignments[self.remaining_sellers[k]] = [self.waypoints[w]]
+				assigned_waypt = self.waypoints[w]
+				assigned_seller = self.remaining_sellers[k]
 
-		if old_surplus is not None and old_surplus < 0:
-			self.assignments = defaultdict(list)
-		# print("Final Assignment", self.assignments)
-		self.iterations = iterations
-		# print("Iterations", self.iterations)
+		if assigned_waypt: # remove assigned waypoint and seller from future assignments
+			self.waypoints.remove(assigned_waypt)
+			self.remaining_sellers.remove(assigned_seller)
+			self.prov_alloc.append(assigned_waypt)
+		return found
+
+	def greedy_assign(self):
+		self.getWaypointCosts()
+		self.prov_alloc = []
+		self.remaining_sellers = self.sellers.copy()
+		while True:
+			self.getWaypointValues(self.prov_alloc)
+			found = self.assign(self.prov_alloc)
+			if not found:
+				break
+		
 
 	def run(self):
 		start = time.time()
 		self.getAllPaths()
 		# print("Utilities:", self.utilities)
 		# for i in range(len(self.agents)):
-		# 	print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
+			# print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
 		if self.sellers is None:
+			# print("Sellers is empty here!")
 			self.random_buyer_seller()
+		# print("Sellers within greedy", self.sellers)
+		# print("Buyers within greedy", self.buyers)
 		self.getAllWaypoints()
 		# print("Paths: ", np.array(self.paths))
 		# print("Waypoints: ", self.waypoints)
-		self.iterative_market(0.5)
+		self.greedy_assign()
 		# print("Assignments: ", self.assignments)
 		end = time.time()
 		# print("Elapsed time: ", end-start)
 		return self.assignments
-
-	def visualize_surplus(self):
-		iterations = list(range(1,len(self.surplus)+1))
-		surplus = self.surplus
-		plt.plot(iterations, surplus)
-		plt.title('Surplus Over Market Execution')
-		plt.xlabel('Number of Iterations')
-		plt.ylabel('Surplus')
-		plt.savefig('Surplus.png')
-		plt.show()
-		
 
 if __name__ == "__main__":
 	# grid = [[0,0,0,0,0.5],
@@ -508,7 +475,7 @@ if __name__ == "__main__":
 			[1.,  0.,  0.,  0.,  0.5]]
 
 	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (3, 3)], [25, 25, 25, 25])
-	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	g= Greedy(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
 	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
 	g.run()
@@ -534,13 +501,13 @@ if __name__ == "__main__":
 	# g = IterativeAuction(env)
 	# print(g.dijkstra(g.grid,g.agents[0],g.dests[0],g.rewards[0]))
 
-	while True:
-		env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
-		env.getEnv()
-		g = IterativeAuction(env) 
-		g.run()
-		if g.iterations >=5:
-			break
+	# while True:
+	# 	env = EnvGenerator(5,5,4,0.3,0.5,0.2,25)
+	# 	env.getEnv()
+	# 	g = Greedy(env) 
+	# 	g.run()
+	# 	if g.iterations >=2:
+	# 		break
 		# time.sleep(1)
 
 # This code is inspired by Neelam Yadav's contribution.
