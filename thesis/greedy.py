@@ -63,6 +63,19 @@ class Greedy:
 
 		return min_index 
 
+	def minDistanceDrone(self,dist,queue): 
+		# Initialize min value and min_index as -1 
+		minimum = float("Inf") 
+		min_index = -1
+
+		for (i,j) in queue:
+			if dist[i][j] <= minimum:
+				minimum = dist[i][j] 
+				min_index = (i,j)
+
+		return min_index 
+
+
 
 	# Function to print shortest path 
 	# from source to j 
@@ -332,6 +345,43 @@ class Greedy:
 		# print("Cost: ", cost)
 		return cost, cum_path
 
+	def waypointCostDrone(self, grid, src, dest): 
+		row = self.rows
+		col = self.cols
+
+		dist = [[float("inf") for i in range(col)] for i in range(row)]
+
+		parent = [[(-1,-1) for i in range(col)] for i in range(row)]
+
+		# num steps 0, total cost 0
+		dist[src[0]][src[1]] = 0
+	
+		# Add all vertices in queue 
+		queue = [src] 
+		
+		#Find shortest path for all vertices 
+		while queue: 
+			u = self.minDistanceDrone(dist,queue) 
+			# print(queue)
+			# print(u)
+			# remove min element	 
+			queue.remove(u)
+
+			for p in self.get_adjacent(u): 
+				'''Update p only if it is in queue, there is 
+				an edge from u to p (already guaranteed via for loop), and total weight of path from 
+				src to p through u is smaller than current value of 
+				dist[p[0]][p[1]]'''
+				if grid[p[0]][p[1]] == 1:
+					dist[p[0]][p[1]] = float("inf")
+				elif dist[u[0]][u[1]] + 1 < dist[p[0]][p[1]]: 
+					dist[p[0]][p[1]] = dist[u[0]][u[1]] + 1
+					parent[p[0]][p[1]] = u 
+					queue.append(p)
+			# print(dist)
+		if dist[dest[0]][dest[1]] == float("inf"):
+			return None, self.getPath(parent,dest[0], dest[1], src, [])
+		return dist[dest[0]][dest[1]], self.getPath(parent,dest[0], dest[1], src, [])
 
 	def random_buyer_seller(self):
 		num_sellers = random.randint(1,len(self.agents)) 
@@ -350,13 +400,16 @@ class Greedy:
 			self.values[w] = value
 			# print("Value of", w, "is", value)
 
-	def getWaypointCosts(self):
+	def getWaypointCosts(self,drone):
 		self.costs = {} # for each waypoint, cost to each agent
 		for i in range(len(self.waypoints)):
 			w = self.waypoints[i]
 			self.costs[w] = {}
 			for a in range(len(self.sellers)):
-				cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+				if not drone:
+					cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+				else:
+					cost, _ = self.waypointCostDrone(self.grid, self.sellers[a],w)
 				seller = self.sellers[a]
 				self.costs[w][seller] = cost
 				# print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost)
@@ -417,8 +470,8 @@ class Greedy:
 			self.prov_alloc.append(assigned_waypt)
 		return found
 
-	def greedy_assign(self):
-		self.getWaypointCosts()
+	def greedy_assign(self, drone):
+		self.getWaypointCosts(drone)
 		self.prov_alloc = []
 		self.remaining_sellers = self.sellers.copy()
 		while True:
@@ -428,8 +481,7 @@ class Greedy:
 				break
 		
 
-	def run(self):
-		start = time.time()
+	def run(self, drone=False):
 		self.getAllPaths()
 		# print("Utilities:", self.utilities)
 		# for i in range(len(self.agents)):
@@ -439,12 +491,14 @@ class Greedy:
 			self.random_buyer_seller()
 		# print("Sellers within greedy", self.sellers)
 		# print("Buyers within greedy", self.buyers)
+		start = time.time()
 		self.getAllWaypoints()
 		# print("Paths: ", np.array(self.paths))
 		# print("Waypoints: ", self.waypoints)
-		self.greedy_assign()
+		self.greedy_assign(drone)
 		# print("Assignments: ", self.assignments)
 		end = time.time()
+		self.assign_time = end-start
 		# print("Elapsed time: ", end-start)
 		return self.assignments
 
@@ -478,7 +532,7 @@ if __name__ == "__main__":
 	g= Greedy(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
 	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.run()
+	g.run(True)
 
 
 	# grid = [[0,0,0],

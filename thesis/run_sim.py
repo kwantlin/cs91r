@@ -18,11 +18,12 @@ import seaborn as sns
 
 
 class Simulation:
-	def __init__(self, planner, revealed_grid=None):
+	def __init__(self, planner, revealed_grid=None, drone=False):
 		self.planner = planner
 		self.agents = planner.agents
 		self.helper_paths = {}
 		self.revealed_grid=revealed_grid
+		self.drone = drone
 	# def nofails(self):
 	# 	for a self.agents
 
@@ -39,7 +40,7 @@ class Simulation:
 
 	def move_until_fail(self):
 		planner = self.planner
-		assignments = planner.run()
+		assignments = planner.run(self.drone)
 		self.assignments = assignments
 		# print(self.assignments)
 		self.nonhelpers = planner.buyers.copy()
@@ -52,7 +53,8 @@ class Simulation:
 		helpers = self.helpers.copy()
 		for a in helpers:
 			if a not in assignments:
-				self.nonhelpers.append(a)
+				if not self.drone:
+					self.nonhelpers.append(a)
 				self.helpers.remove(a)
 		# print("Updated Sellers", self.helpers)
 		# print("Updated Nonhelpers", self.nonhelpers)
@@ -69,12 +71,12 @@ class Simulation:
 		if helpers:
 			for i in range(len(helpers)):
 				if helpers[i] in assignments:
-					try:
+					if not self.drone:
 						path = planner.waypointCost(planner.grid,helpers[i],planner.dests[planner.agents.index(helpers[i])],assignments[helpers[i]],planner.rewards[planner.agents.index(helpers[i])],planner.utilities[planner.agents.index(helpers[i])])[1]
-					except:
+					else: 
 						path = []
 						for p in assignments[helpers[i]]:
-							path += planner.waypointCost(planner.grid,helpers[i],p)[1]
+							path += planner.waypointCostDrone(planner.grid,helpers[i],p)[1]
 					self.helper_paths[helpers[i]] = path 
 		# print("Helper paths", self.helper_paths)
 		cost = 0
@@ -100,7 +102,7 @@ class Simulation:
 								grid[p[0]][p[1]] = self.revealed_grid[p[0]][p[1]]
 							else:
 								grid[p[0]][p[1]] = np.random.choice([0,1], p=[1-grid[p[0]][p[1]], grid[p[0]][p[1]]])
-						if grid[p[0]][p[1]] == 1:
+						if grid[p[0]][p[1]] == 1 and not self.drone:
 							total_fail += 1
 							# print(str(p) + " is blocked.")
 							del self.helper_paths[a]
@@ -157,10 +159,14 @@ class Simulation:
 		self.help_cost = help_cost
 		self.total_success = total_success
 		self.total_fail = total_fail
+		if not self.drone:
+			self.proportion_success = total_success / (len(self.helpers) + len(self.nonhelpers))
+		else:
+			self.proportion_success = total_success / len(self.nonhelpers)
 		return grid, cost, total_u
 
 
-def runSims(assignonly=False):
+def runSims(assignonly=False,drone=False):
 	greedy_u = []
 	iter_auc_u = []
 	opt_u = []
@@ -188,6 +194,11 @@ def runSims(assignonly=False):
 	nosell_total_success = []
 	nosell_total_fail = []
 
+	greedy_proportion_success = []
+	iter_proportion_success = []
+	opt_proportion_success = []
+	nosell_proportion_success = []
+
 	greedy_help_costs = []
 	iter_help_costs = []
 	opt_help_costs = []
@@ -198,6 +209,10 @@ def runSims(assignonly=False):
 	faildiff_greedy_nosell = []
 	faildiff_iter_nosell = []
 	faildiff_opt_nosell = []
+
+	greedy_assign_time = []
+	iter_assign_time = []
+	opt_assign_time = []
 	
 	i = 0
 	while i < 100:
@@ -205,7 +220,7 @@ def runSims(assignonly=False):
 		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
 		env.getEnv()
 		opt_assign = OptimalBaseline(env) 
-		sim1 = Simulation(opt_assign)
+		sim1 = Simulation(opt_assign, drone=drone)
 		revealed_grid, cost_opt, total_u_opt = sim1.move_until_fail()
 		# print(revealed_grid)
 		if assignonly and not sim1.assignments: #if we want to compare envs with assignments but get none move to next
@@ -218,41 +233,52 @@ def runSims(assignonly=False):
 			opt_help_costs.append(sim1.help_cost)
 			opt_total_success.append(sim1.total_success)
 			opt_total_fail.append(sim1.total_fail)
+			opt_proportion_success.append(sim1.proportion_success)
+			opt_assign_time.append(opt_assign.assign_time)
 
 			sellers = opt_assign.sellers
 			buyers = opt_assign.buyers
 
 			# print("Beginning Greedy")
 			greedy = Greedy(env, sellers, buyers) 
-			sim2 = Simulation(greedy, revealed_grid)
+			sim2 = Simulation(greedy, revealed_grid,drone)
 			_, cost_greedy, total_u_greedy = sim2.move_until_fail()
 			greedy_u.append(total_u_greedy)
 			greedy_costs.append(cost_greedy)
 			greedy_help_costs.append(sim2.help_cost)
 			greedy_total_success.append(sim2.total_success)
 			greedy_total_fail.append(sim2.total_fail)
+			greedy_proportion_success.append(sim2.proportion_success)
+			greedy_assign_time.append(greedy.assign_time)
 
 			# print("Beginning Iterative Auction")
 			iter_auc = IterativeAuction(env, sellers, buyers) 
-			sim3 = Simulation(iter_auc, revealed_grid)
+			sim3 = Simulation(iter_auc, revealed_grid,drone)
 			_, cost_it, total_u_it = sim3.move_until_fail()
 			iter_auc_u.append(total_u_it)
 			iter_auc_costs.append(cost_it)
 			iter_help_costs.append(sim3.help_cost)
 			iter_total_success.append(sim3.total_success)
 			iter_total_fail.append(sim3.total_fail)
+			iter_proportion_success.append(sim3.proportion_success)
+			iter_assign_time.append(iter_auc.assign_time)
 			# print("End of optimal")
 			
 			# print("Beginning Nosell")
 			sellers = []
-			buyers = iter_auc.agents
-			iter_auc = IterativeAuction(env, sellers, buyers) 
-			sim4 = Simulation(iter_auc, revealed_grid)
+			if not drone:
+				buyers = iter_auc.agents #convert all sellers to nonhelpers
+			else:
+				buyers = iter_auc.buyers #only buyers are nonhelpers, since sellers are drones
+
+			nosell = IterativeAuction(env, sellers, buyers) #using this method's dijkstra, with no helper agents/sellers
+			sim4 = Simulation(nosell, revealed_grid,drone)
 			_, cost_nosell, total_u_nosell = sim4.move_until_fail()
 			nosell_u.append(total_u_nosell)
 			nosell_costs.append(cost_nosell)
 			nosell_total_success.append(sim4.total_success)
 			nosell_total_fail.append(sim4.total_fail)
+			nosell_proportion_success.append(sim4.proportion_success)
 
 			diff_greedy_nosell.append(total_u_greedy - total_u_nosell)
 			diff_iter_nosell.append(total_u_it - total_u_nosell)
@@ -270,35 +296,46 @@ def runSims(assignonly=False):
 			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
 
 
-	print("Greedy U", greedy_u)
-	print("Iter Auc U", iter_auc_u)
-	print("Opt U", opt_u)
+	# print("Greedy U", greedy_u)
+	# print("Iter Auc U", iter_auc_u)
+	# print("Opt U", opt_u)
 
-	print("Diff greedy nosell", diff_greedy_nosell)
-	print("Diff iter nosell", diff_iter_nosell)
-	print("Diff opt nosell", diff_opt_nosell)
+	print("Average Nosell U", mean(nosell_u), "Stdev", stdev(nosell_u))
+	print("Average Greedy U", mean(greedy_u), "Stdev", stdev(greedy_u))
+	print("Average Iter Auc U", mean(iter_auc_u), "Stdev", stdev(iter_auc_u))
+	print("Average Opt U", mean(opt_u), "Stdev", stdev(opt_u))
 
-	print("Help Cost Greedy", greedy_help_costs)
-	print("Greedy Costs", greedy_costs)
-	print("Help Cost Iter", iter_help_costs)
-	print("Iter Auc Costs", iter_auc_costs)
-	print("Nosell Costs", nosell_costs)
+	# print("Diff greedy nosell", diff_greedy_nosell)
+	# print("Diff iter nosell", diff_iter_nosell)
+	# print("Diff opt nosell", diff_opt_nosell)
 
-	print("Greedy Fails", greedy_total_fail)
-	print("Greedy Successes", greedy_total_success)
-	print("Iter Auc Fails", iter_total_fail)
-	print("Iter Auc Successes", iter_total_success)
-	print("Opt Fails", opt_total_fail)
-	print("Opt Successes", opt_total_success)
-	print("Nosell Fails", nosell_total_fail)
-	print("Nosell Successes", nosell_total_success)
+	# print("Help Cost Greedy", greedy_help_costs)
+	# print("Greedy Costs", greedy_costs)
+	# print("Help Cost Iter", iter_help_costs)
+	# print("Iter Auc Costs", iter_auc_costs)
+	# print("Nosell Costs", nosell_costs)
+
+	# print("Greedy Fails", greedy_total_fail)
+	# print("Greedy Successes", greedy_total_success)
+	# print("Iter Auc Fails", iter_total_fail)
+	# print("Iter Auc Successes", iter_total_success)
+	# print("Opt Fails", opt_total_fail)
+	# print("Opt Successes", opt_total_success)
+	# print("Nosell Fails", nosell_total_fail)
+	# print("Nosell Successes", nosell_total_success)
 
 	avg_diff_success_greedy_nosell = np.mean(successdiff_greedy_nosell)
 	avg_diff_success_iter_nosell = np.mean(successdiff_iter_nosell)
 	avg_diff_success_opt_nosell = np.mean(successdiff_opt_nosell)
-	print("Average Diff Success Greedy Nosell", avg_diff_success_greedy_nosell)
-	print("Average Diff Success Iter Nosell", avg_diff_success_iter_nosell)
-	print("Average Diff Success Opt Nosell", avg_diff_success_opt_nosell)
+	print("Average Diff Success Greedy Nosell", avg_diff_success_greedy_nosell, "Stdev", np.std(successdiff_greedy_nosell))
+	print("Average Diff Success Iter Nosell", avg_diff_success_iter_nosell, "Stdev", np.std(successdiff_iter_nosell))
+	print("Average Diff Success Opt Nosell", avg_diff_success_opt_nosell, "Stdev", np.std(successdiff_opt_nosell))
+
+	print("Average Proportion Success Greedy", mean(greedy_proportion_success), "Stdev", stdev(greedy_proportion_success))
+	print("Average Proportion Success Iter Auc", mean(iter_proportion_success), "Stdev", stdev(iter_proportion_success))
+	print("Average Proportion Success Opt", mean(opt_proportion_success), "Stdev", stdev(opt_proportion_success))
+	print("Average Proportion Success Nosell", mean(nosell_proportion_success), "Stdev", stdev(nosell_proportion_success))
+
 
 
 	avg_diff_greedy_nosell = mean(diff_greedy_nosell)
@@ -306,18 +343,26 @@ def runSims(assignonly=False):
 	avg_diff_opt_nosell = mean(diff_opt_nosell)
 	avg_greedy_help_costs = mean(greedy_help_costs)
 	avg_iter_help_costs = mean(iter_help_costs)
-	print("Average U Diff Greedy vs Nosell", avg_diff_greedy_nosell)
-	print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell)
-	print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell)
+	avg_opt_help_costs = mean(opt_help_costs)
+	print("Average U Diff Greedy vs Nosell", avg_diff_greedy_nosell, "stdev", stdev(diff_greedy_nosell))
+	print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell, "stdev", stdev(diff_iter_nosell))
+	print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell, "stdev", stdev(diff_opt_nosell))
 
 	avg_costdiff_greedy_nosell = np.mean(costdiff_greedy_nosell)
 	avg_costdiff_iter_nosell = np.mean(costdiff_iter_nosell)
 	avg_costdiff_opt_nosell = np.mean(costdiff_opt_nosell)
-	print("Average Help Costs Iter Auc", avg_iter_help_costs)
-	print("Average Help Costs Greedy", avg_greedy_help_costs)
-	print("Average Cost Diff Greedy vs Nosell", avg_costdiff_greedy_nosell)
-	print("Average Cost Diff Iterauc vs Nosell", avg_costdiff_iter_nosell)
-	print("Average Cost Diff Opt vs Nosell", avg_costdiff_opt_nosell)
+	print("Average Help Costs Iter Auc", avg_iter_help_costs, "stdev", stdev(iter_help_costs))
+	print("Average Help Costs Greedy", avg_greedy_help_costs, "stdev", stdev(greedy_help_costs))
+	print("Average Help Costs Opt", avg_opt_help_costs, "stdev", stdev(opt_help_costs))
+	print("Average Cost Nosell", mean(nosell_costs), "stdev", stdev(nosell_costs))
+	print("Average Cost Greedy", mean(greedy_costs), "stdev", stdev(greedy_costs))
+	print("Average Cost Iterauc ", mean(iter_auc_costs), "stdev", stdev(iter_auc_costs))
+	print("Average Cost Opt", mean(opt_costs), "stdev", stdev(opt_costs))
+
+	print("Average Assign Time Greedy", mean(greedy_assign_time), "stdev", stdev(greedy_assign_time))
+	print("Average Assign Time Iter Auc", mean(iter_assign_time), "stdev", stdev(iter_assign_time))
+	print("Average Assign Time Opt", mean(opt_assign_time), "stdev", stdev(opt_assign_time))
+
 
 
 	#Visualize Expected U Difference
@@ -463,7 +508,9 @@ def runSims(assignonly=False):
 	
 
 if __name__ == "__main__":
-	runSims(assignonly=True)
+	# runSims(assignonly=True,drone=False)
+	runSims(assignonly=True,drone=True)
+
 
 	# Example 1
 	# grid = [[0.5, 0.,  1.,  0.,  0. ],

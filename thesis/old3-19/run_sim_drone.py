@@ -134,7 +134,7 @@ class Simulation:
 				break
 		# print("Total Cost:", cost)
 		total_u = 0
-		total_success = len(self.nonhelpers) - total_fail
+		total_success = len(self.nonhelpers) - total_fail # TODO: Incorrect! Number of non-drones is variable.
 		for a in agents_pos_updates:
 			if agents_pos_updates[a] == planner.dests[self.agents.index(a)]:
 				total_u += planner.rewards[self.agents.index(a)]
