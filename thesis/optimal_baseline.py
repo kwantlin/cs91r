@@ -283,7 +283,7 @@ class OptimalBaseline:
 				prob *= grid[p[0]][p[1]]
 				grid[p[0]][p[1]] = 1
 			
-			path, utility, prob,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
+			path, utility, _,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
 			if utility is None:
 				utility = 0
 			# print("Path w/ Info", c, path)
@@ -426,6 +426,7 @@ class OptimalBaseline:
 			if w_index != -1:
 				w = self.waypoints[w_index]
 				self.assignments[self.sellers[i]] = [w] # note - designed for singleton case
+		self.surplus = best_profit
 		# print("Best Profit", best_profit)
 		#TODO: ensure the costs, etc. reported match what iterauc gives
 

@@ -4,6 +4,7 @@ import random
 from envgenerator import EnvGenerator
 from greedy import Greedy
 from iterative_auction import IterativeAuction
+from iterative_auction_ceiling import IterativeAuctionCeiling
 from optimal_baseline import OptimalBaseline
 from collections import defaultdict, Counter
 import numpy as np
@@ -42,7 +43,10 @@ class Simulation:
 		planner = self.planner
 		assignments = planner.run(self.drone)
 		self.assignments = assignments
+		self.surplus = planner.surplus
+		self.num_assign = len(self.assignments)
 		# print(self.assignments)
+		# print(len(self.assignments))
 		self.nonhelpers = planner.buyers.copy()
 		self.helpers = planner.sellers.copy()
 		# print("Sellers", self.helpers)
@@ -169,26 +173,32 @@ class Simulation:
 def runSims(assignonly=False,drone=False):
 	greedy_u = []
 	iter_auc_u = []
+	iter_auc_ceil_u = []
 	opt_u = []
 	nosell_u = []
 
 	greedy_costs = []
 	iter_auc_costs = []
+	iter_auc_ceil_costs = []
 	opt_costs = []
 	nosell_costs = []
 
 	diff_opt_nosell = []
 	diff_iter_nosell = []
+	diff_iter_ceil_nosell = []
 	diff_greedy_nosell = []
 
 	costdiff_greedy_nosell = []
 	costdiff_iter_nosell = []
+	costdiff_iter_ceil_nosell = []
 	costdiff_opt_nosell = []
 
 	greedy_total_success = []
 	greedy_total_fail = []
 	iter_total_success = []
 	iter_total_fail = []
+	iter_ceil_total_success = []
+	iter_ceil_total_fail = []
 	opt_total_success = []
 	opt_total_fail = []
 	nosell_total_success = []
@@ -196,28 +206,44 @@ def runSims(assignonly=False,drone=False):
 
 	greedy_proportion_success = []
 	iter_proportion_success = []
+	iter_ceil_proportion_success = []
 	opt_proportion_success = []
 	nosell_proportion_success = []
 
 	greedy_help_costs = []
 	iter_help_costs = []
+	iter_ceil_help_costs = []
 	opt_help_costs = []
 
 	successdiff_greedy_nosell = []
 	successdiff_iter_nosell = []
+	successdiff_iter_ceil_nosell = []
 	successdiff_opt_nosell = []
 	faildiff_greedy_nosell = []
 	faildiff_iter_nosell = []
+	faildiff_iter_ceil_nosell = []
 	faildiff_opt_nosell = []
 
 	greedy_assign_time = []
 	iter_assign_time = []
+	iter_ceil_assign_time = []
 	opt_assign_time = []
+
+	greedy_num_assign = []
+	iter_num_assign = []
+	iter_ceil_num_assign = []
+	opt_num_assign = []
+
+	greedy_surplus = []
+	iter_surplus = []
+	iter_ceil_surplus = []
+	opt_surplus = []
+
 	
 	i = 0
-	while i < 100:
+	while i < 1:
 		print(i)
-		env = EnvGenerator(5,5,4,0.3,0.3,0.4,25)
+		env = EnvGenerator(5,5,4,0.4,0.3,0.3,25)
 		env.getEnv()
 		opt_assign = OptimalBaseline(env) 
 		sim1 = Simulation(opt_assign, drone=drone)
@@ -225,8 +251,9 @@ def runSims(assignonly=False,drone=False):
 		# print(revealed_grid)
 		if assignonly and not sim1.assignments: #if we want to compare envs with assignments but get none move to next
 			continue
-		
+		print(revealed_grid)
 		if revealed_grid is not None:
+			print("here")
 			i += 1
 			opt_u.append(total_u_opt)
 			opt_costs.append(cost_opt)
@@ -235,6 +262,8 @@ def runSims(assignonly=False,drone=False):
 			opt_total_fail.append(sim1.total_fail)
 			opt_proportion_success.append(sim1.proportion_success)
 			opt_assign_time.append(opt_assign.assign_time)
+			opt_num_assign.append(sim1.num_assign)
+			opt_surplus.append(sim1.surplus)
 
 			sellers = opt_assign.sellers
 			buyers = opt_assign.buyers
@@ -250,6 +279,8 @@ def runSims(assignonly=False,drone=False):
 			greedy_total_fail.append(sim2.total_fail)
 			greedy_proportion_success.append(sim2.proportion_success)
 			greedy_assign_time.append(greedy.assign_time)
+			greedy_num_assign.append(sim2.num_assign)
+			greedy_surplus.append(sim2.surplus)
 
 			# print("Beginning Iterative Auction")
 			iter_auc = IterativeAuction(env, sellers, buyers) 
@@ -262,7 +293,23 @@ def runSims(assignonly=False,drone=False):
 			iter_total_fail.append(sim3.total_fail)
 			iter_proportion_success.append(sim3.proportion_success)
 			iter_assign_time.append(iter_auc.assign_time)
-			# print("End of optimal")
+			iter_num_assign.append(sim3.num_assign)
+			iter_surplus.append(sim3.surplus[-1])
+
+			# print("Beginning Iterative Auction w/ Ceiling")
+
+			iter_auc_ceil = IterativeAuctionCeiling(env, sellers, buyers) 
+			sim3_1 = Simulation(iter_auc_ceil, revealed_grid,drone)
+			_, cost_it_ceil, total_u_it_ceil = sim3_1.move_until_fail()
+			iter_auc_ceil_u.append(total_u_it_ceil)
+			iter_auc_ceil_costs.append(cost_it_ceil)
+			iter_ceil_help_costs.append(sim3_1.help_cost)
+			iter_ceil_total_success.append(sim3_1.total_success)
+			iter_ceil_total_fail.append(sim3_1.total_fail)
+			iter_ceil_proportion_success.append(sim3_1.proportion_success)
+			iter_ceil_assign_time.append(iter_auc_ceil.assign_time)
+			iter_ceil_num_assign.append(sim3_1.num_assign)
+			iter_ceil_surplus.append(sim3_1.surplus[-1])
 			
 			# print("Beginning Nosell")
 			sellers = []
@@ -282,213 +329,241 @@ def runSims(assignonly=False,drone=False):
 
 			diff_greedy_nosell.append(total_u_greedy - total_u_nosell)
 			diff_iter_nosell.append(total_u_it - total_u_nosell)
+			diff_iter_ceil_nosell.append(total_u_it_ceil - total_u_nosell)
 			diff_opt_nosell.append(total_u_opt - total_u_nosell)
 			
 			successdiff_greedy_nosell = np.subtract(np.array(greedy_total_success), np.array(nosell_total_success))
 			successdiff_iter_nosell = np.subtract(np.array(iter_total_success), np.array(nosell_total_success))
+			successdiff_iter_ceil_nosell = np.subtract(np.array(iter_ceil_total_success), np.array(nosell_total_success))
 			successdiff_opt_nosell = np.subtract(np.array(opt_total_success), np.array(nosell_total_success))
 			faildiff_greedy_nosell = np.subtract(np.array(greedy_total_fail), np.array(nosell_total_fail))
 			faildiff_iter_nosell = np.subtract(np.array(iter_total_fail), np.array(nosell_total_fail))
+			faildiff_iter_ceil_nosell = np.subtract(np.array(iter_ceil_total_fail), np.array(nosell_total_fail))
 			faildiff_opt_nosell = np.subtract(np.array(opt_total_fail), np.array(nosell_total_fail))
 
 			costdiff_greedy_nosell = np.subtract(np.array(greedy_costs), np.array(nosell_costs))
 			costdiff_iter_nosell = np.subtract(np.array(iter_auc_costs), np.array(nosell_costs))
+			costdiff_iter_ceil_nosell = np.subtract(np.array(iter_auc_ceil_costs), np.array(nosell_costs))
 			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
+			print("Nosellu", nosell_u)
+			print(opt_num_assign)
+			print("Optu", opt_u)
 
+		if i == 0:
+			with open('test.txt', 'w') as f:
+				# print("Greedy U", greedy_u)
+				# print("Iter Auc U", iter_auc_u)
+				# print("Opt U", opt_u)
+				print("Iteration", i, file=f)
+				print("Average Nosell U", mean(nosell_u), "Stdev", stdev(nosell_u), file=f)
+				print("Average Greedy U", mean(greedy_u), "Stdev", stdev(greedy_u), file=f)
+				print("Average Iter Auc U", mean(iter_auc_u), "Stdev", stdev(iter_auc_u), file=f)
+				print("Average Iter Auc Ceil U", mean(iter_auc_ceil_u), "Stdev", stdev(iter_auc_ceil_u), file=f)
+				print("Average Opt U", mean(opt_u), "Stdev", stdev(opt_u), file=f)
 
-	# print("Greedy U", greedy_u)
-	# print("Iter Auc U", iter_auc_u)
-	# print("Opt U", opt_u)
+				# print("Diff greedy nosell", diff_greedy_nosell)
+				# print("Diff iter nosell", diff_iter_nosell)
+				# print("Diff opt nosell", diff_opt_nosell)
 
-	print("Average Nosell U", mean(nosell_u), "Stdev", stdev(nosell_u))
-	print("Average Greedy U", mean(greedy_u), "Stdev", stdev(greedy_u))
-	print("Average Iter Auc U", mean(iter_auc_u), "Stdev", stdev(iter_auc_u))
-	print("Average Opt U", mean(opt_u), "Stdev", stdev(opt_u))
+				# print("Help Cost Greedy", greedy_help_costs)
+				# print("Greedy Costs", greedy_costs)
+				# print("Help Cost Iter", iter_help_costs)
+				# print("Iter Auc Costs", iter_auc_costs)
+				# print("Nosell Costs", nosell_costs)
 
-	# print("Diff greedy nosell", diff_greedy_nosell)
-	# print("Diff iter nosell", diff_iter_nosell)
-	# print("Diff opt nosell", diff_opt_nosell)
+				# print("Greedy Fails", greedy_total_fail)
+				# print("Greedy Successes", greedy_total_success)
+				# print("Iter Auc Fails", iter_total_fail)
+				# print("Iter Auc Successes", iter_total_success)
+				# print("Opt Fails", opt_total_fail)
+				# print("Opt Successes", opt_total_success)
+				# print("Nosell Fails", nosell_total_fail)
+				# print("Nosell Successes", nosell_total_success)
 
-	# print("Help Cost Greedy", greedy_help_costs)
-	# print("Greedy Costs", greedy_costs)
-	# print("Help Cost Iter", iter_help_costs)
-	# print("Iter Auc Costs", iter_auc_costs)
-	# print("Nosell Costs", nosell_costs)
+				avg_diff_success_greedy_nosell = np.mean(successdiff_greedy_nosell)
+				avg_diff_success_iter_nosell = np.mean(successdiff_iter_nosell)
+				avg_diff_success_iter_ceil_nosell = np.mean(successdiff_iter_ceil_nosell)
+				avg_diff_success_opt_nosell = np.mean(successdiff_opt_nosell)
+				print("Average Diff Success Greedy Nosell", avg_diff_success_greedy_nosell, "Stdev", np.std(successdiff_greedy_nosell), file=f)
+				print("Average Diff Success Iter Nosell", avg_diff_success_iter_nosell, "Stdev", np.std(successdiff_iter_nosell), file=f)
+				print("Average Diff Success IterCeil Nosell", avg_diff_success_iter_ceil_nosell, "Stdev", np.std(successdiff_iter_ceil_nosell), file=f)
+				print("Average Diff Success Opt Nosell", avg_diff_success_opt_nosell, "Stdev", np.std(successdiff_opt_nosell), file=f)
 
-	# print("Greedy Fails", greedy_total_fail)
-	# print("Greedy Successes", greedy_total_success)
-	# print("Iter Auc Fails", iter_total_fail)
-	# print("Iter Auc Successes", iter_total_success)
-	# print("Opt Fails", opt_total_fail)
-	# print("Opt Successes", opt_total_success)
-	# print("Nosell Fails", nosell_total_fail)
-	# print("Nosell Successes", nosell_total_success)
-
-	avg_diff_success_greedy_nosell = np.mean(successdiff_greedy_nosell)
-	avg_diff_success_iter_nosell = np.mean(successdiff_iter_nosell)
-	avg_diff_success_opt_nosell = np.mean(successdiff_opt_nosell)
-	print("Average Diff Success Greedy Nosell", avg_diff_success_greedy_nosell, "Stdev", np.std(successdiff_greedy_nosell))
-	print("Average Diff Success Iter Nosell", avg_diff_success_iter_nosell, "Stdev", np.std(successdiff_iter_nosell))
-	print("Average Diff Success Opt Nosell", avg_diff_success_opt_nosell, "Stdev", np.std(successdiff_opt_nosell))
-
-	print("Average Proportion Success Greedy", mean(greedy_proportion_success), "Stdev", stdev(greedy_proportion_success))
-	print("Average Proportion Success Iter Auc", mean(iter_proportion_success), "Stdev", stdev(iter_proportion_success))
-	print("Average Proportion Success Opt", mean(opt_proportion_success), "Stdev", stdev(opt_proportion_success))
-	print("Average Proportion Success Nosell", mean(nosell_proportion_success), "Stdev", stdev(nosell_proportion_success))
-
-
-
-	avg_diff_greedy_nosell = mean(diff_greedy_nosell)
-	avg_diff_iter_nosell = mean(diff_iter_nosell)
-	avg_diff_opt_nosell = mean(diff_opt_nosell)
-	avg_greedy_help_costs = mean(greedy_help_costs)
-	avg_iter_help_costs = mean(iter_help_costs)
-	avg_opt_help_costs = mean(opt_help_costs)
-	print("Average U Diff Greedy vs Nosell", avg_diff_greedy_nosell, "stdev", stdev(diff_greedy_nosell))
-	print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell, "stdev", stdev(diff_iter_nosell))
-	print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell, "stdev", stdev(diff_opt_nosell))
-
-	avg_costdiff_greedy_nosell = np.mean(costdiff_greedy_nosell)
-	avg_costdiff_iter_nosell = np.mean(costdiff_iter_nosell)
-	avg_costdiff_opt_nosell = np.mean(costdiff_opt_nosell)
-	print("Average Help Costs Iter Auc", avg_iter_help_costs, "stdev", stdev(iter_help_costs))
-	print("Average Help Costs Greedy", avg_greedy_help_costs, "stdev", stdev(greedy_help_costs))
-	print("Average Help Costs Opt", avg_opt_help_costs, "stdev", stdev(opt_help_costs))
-	print("Average Cost Nosell", mean(nosell_costs), "stdev", stdev(nosell_costs))
-	print("Average Cost Greedy", mean(greedy_costs), "stdev", stdev(greedy_costs))
-	print("Average Cost Iterauc ", mean(iter_auc_costs), "stdev", stdev(iter_auc_costs))
-	print("Average Cost Opt", mean(opt_costs), "stdev", stdev(opt_costs))
-
-	print("Average Assign Time Greedy", mean(greedy_assign_time), "stdev", stdev(greedy_assign_time))
-	print("Average Assign Time Iter Auc", mean(iter_assign_time), "stdev", stdev(iter_assign_time))
-	print("Average Assign Time Opt", mean(opt_assign_time), "stdev", stdev(opt_assign_time))
+				print("Average Proportion Success Greedy", mean(greedy_proportion_success), "Stdev", stdev(greedy_proportion_success), file=f)
+				print("Average Proportion Success Iter Auc", mean(iter_proportion_success), "Stdev", stdev(iter_proportion_success), file=f)
+				print("Average Proportion Success IterCeil Auc", mean(iter_ceil_proportion_success), "Stdev", stdev(iter_ceil_proportion_success), file=f)
+				print("Average Proportion Success Opt", mean(opt_proportion_success), "Stdev", stdev(opt_proportion_success), file=f)
+				print("Average Proportion Success Nosell", mean(nosell_proportion_success), "Stdev", stdev(nosell_proportion_success), file=f)
 
 
 
-	#Visualize Expected U Difference
+				avg_diff_greedy_nosell = mean(diff_greedy_nosell)
+				avg_diff_iter_nosell = mean(diff_iter_nosell)
+				avg_diff_iter_ceil_nosell = mean(diff_iter_ceil_nosell)
+				avg_diff_opt_nosell = mean(diff_opt_nosell)
+				avg_greedy_help_costs = mean(greedy_help_costs)
+				avg_iter_help_costs = mean(iter_help_costs)
+				avg_iter_ceil_help_costs = mean(iter_ceil_help_costs)
+				avg_opt_help_costs = mean(opt_help_costs)
+				print("Average U Diff Greedy vs Nosell", avg_diff_greedy_nosell, "stdev", stdev(diff_greedy_nosell), "Percent", avg_diff_greedy_nosell/mean(nosell_u), file=f)
+				print("Average U Diff Iter vs Nosell", avg_diff_iter_nosell, "stdev", stdev(diff_iter_nosell), "Percent", avg_diff_iter_nosell/mean(nosell_u), file=f)
+				print("Average U Diff IterCeil vs Nosell", avg_diff_iter_ceil_nosell, "stdev", stdev(diff_iter_ceil_nosell), "Percent", avg_diff_iter_ceil_nosell/mean(nosell_u), file=f)
+				print("Average U Diff Opt vs Nosell", avg_diff_opt_nosell, "stdev", stdev(diff_opt_nosell), "Percent", avg_diff_opt_nosell/mean(nosell_u), file=f)
 
-	diff_greedy_nosell_error = stdev(diff_greedy_nosell)
-	diff_iter_nosell_error = stdev(diff_iter_nosell)
-	diff_opt_nosell_error = stdev(diff_opt_nosell)
-	eu_error = [diff_greedy_nosell_error, diff_iter_nosell_error, diff_opt_nosell_error]
+				avg_costdiff_greedy_nosell = np.mean(costdiff_greedy_nosell)
+				avg_costdiff_iter_nosell = np.mean(costdiff_iter_nosell)
+				avg_costdiff_iter_ceil_nosell = np.mean(costdiff_iter_ceil_nosell)
+				avg_costdiff_opt_nosell = np.mean(costdiff_opt_nosell)
+				print("Average Help Costs Iter Auc", avg_iter_help_costs, "stdev", stdev(iter_help_costs), file=f)
+				print("Average Help Costs IterCeil Auc", avg_iter_ceil_help_costs, "stdev", stdev(iter_ceil_help_costs), file=f)
+				print("Average Help Costs Greedy", avg_greedy_help_costs, "stdev", stdev(greedy_help_costs), file=f)
+				print("Average Help Costs Opt", avg_opt_help_costs, "stdev", stdev(opt_help_costs), file=f)
+				print("Average Cost Nosell", mean(nosell_costs), "stdev", stdev(nosell_costs), file=f)
+				print("Average Cost Greedy", mean(greedy_costs), "stdev", stdev(greedy_costs), file=f)
+				print("Average Cost Iterauc ", mean(iter_auc_costs), "stdev", stdev(iter_auc_costs), file=f)
+				print("Average Cost IteraucCeil ", mean(iter_auc_ceil_costs), "stdev", stdev(iter_auc_ceil_costs), file=f)
+				print("Average Cost Opt", mean(opt_costs), "stdev", stdev(opt_costs), file=f)
 
-	labels = ["Greedy vs No Exchange", "Iter Auction vs No Exchange", "Optimal vs No Exchange"]
-	x_pos = np.arange(len(labels))
-	ys = [avg_diff_greedy_nosell, avg_diff_iter_nosell, avg_diff_opt_nosell]
-	fig, ax = plt.subplots(figsize=(9,6))
-	ax.bar(x_pos, ys,
-		yerr=eu_error,
-		align='center',
-		alpha=0.5,
-		ecolor='black',
-		capsize=10)
-	ax.set_ylabel('Difference in Expected Utility')
-	ax.set_xticks(x_pos)
-	ax.set_xticklabels(labels)
-	# ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
-	ax.yaxis.grid(True)
+				print("Average Assign Time Greedy", mean(greedy_assign_time), "stdev", stdev(greedy_assign_time), file=f)
+				print("Average Assign Time Iter Auc", mean(iter_assign_time), "stdev", stdev(iter_assign_time), file=f)
+				print("Average Assign Time Iter Auc Ceil", mean(iter_ceil_assign_time), "stdev", stdev(iter_ceil_assign_time), file=f)
+				print("Average Assign Time Opt", mean(opt_assign_time), "stdev", stdev(opt_assign_time), file=f)
 
-	# Save the figure and show
-	plt.savefig('eu-diff.png')
-	plt.show()
+				print("Average NumAssign Greedy", mean(greedy_num_assign), "stdev", stdev(greedy_num_assign), file=f)
+				print("Average NumAssign Iter Auc", mean(iter_num_assign), "stdev", stdev(iter_num_assign), file=f)
+				print("Average NumAssign Iter Auc Ceil", mean(iter_ceil_num_assign), "stdev", stdev(iter_ceil_num_assign), file=f)
+				print("Average NumAssign Opt", mean(opt_num_assign), "stdev", stdev(opt_num_assign), file=f)
+
+				print("Average Greedy Surplus", mean(greedy_surplus), "stdev", stdev(greedy_surplus), file=f)
+				print("Average Iter Surplus", mean(iter_surplus), "stdev", stdev(iter_surplus), file=f)
+				print("Average Iter Ceil Surplus", mean(iter_ceil_surplus), "stdev", stdev(iter_ceil_surplus), file=f)
+				print("Average Opt Surplus", mean(opt_surplus), "stdev", stdev(opt_surplus), file=f)
 
 
-	#Visualize Expected U for each setting
+	# #Visualize Expected U Difference
 
-	avg_greedy_u = mean(greedy_u)
-	avg_iter_u = mean(iter_auc_u)
-	avg_opt_u = mean(opt_u)
-	avg_nosell_u = mean(nosell_u)
+	# diff_greedy_nosell_error = stdev(diff_greedy_nosell)
+	# diff_iter_nosell_error = stdev(diff_iter_nosell)
+	# diff_opt_nosell_error = stdev(diff_opt_nosell)
+	# eu_error = [diff_greedy_nosell_error, diff_iter_nosell_error, diff_opt_nosell_error]
 
-	greedy_u_error = stdev(greedy_u)
-	iter_u_error = stdev(iter_auc_u)
-	opt_u_error = stdev(opt_u)
-	nosell_u_error = stdev(nosell_u)
+	# labels = ["Greedy vs No Exchange", "Iter Auction vs No Exchange", "Optimal vs No Exchange"]
+	# x_pos = np.arange(len(labels))
+	# ys = [avg_diff_greedy_nosell, avg_diff_iter_nosell, avg_diff_opt_nosell]
+	# fig, ax = plt.subplots(figsize=(9,6))
+	# ax.bar(x_pos, ys,
+	# 	yerr=eu_error,
+	# 	align='center',
+	# 	alpha=0.5,
+	# 	ecolor='black',
+	# 	capsize=10)
+	# ax.set_ylabel('Difference in Expected Utility')
+	# ax.set_xticks(x_pos)
+	# ax.set_xticklabels(labels)
+	# # ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
+	# ax.yaxis.grid(True)
 
-	eu_error = [nosell_u_error, greedy_u_error, iter_u_error, opt_u_error]
+	# # Save the figure and show
+	# plt.savefig('eu-diff.png')
+	# plt.show()
 
-	labels = ["No Info Exchange", "Greedy Assignment", "Iterative Auction", "Optimal Assignment"]
-	x_pos = np.arange(len(labels))
-	ys = [avg_nosell_u, avg_greedy_u, avg_iter_u, avg_opt_u]
-	fig, ax = plt.subplots(figsize=(9,6))
-	ax.bar(x_pos, ys,
-		yerr=eu_error,
-		align='center',
-		alpha=0.5,
-		ecolor='black',
-		capsize=10)
-	ax.set_ylabel('Expected Utility Across Settings')
-	ax.set_xticks(x_pos)
-	ax.set_xticklabels(labels)
-	# ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
-	ax.yaxis.grid(True)
 
-	# Save the figure and show
-	plt.tight_layout()
-	plt.savefig('eu-allsettings.png')
-	plt.show()
+	# #Visualize Expected U for each setting
 
-	#Visualize Successs/Fails
+	# avg_greedy_u = mean(greedy_u)
+	# avg_iter_u = mean(iter_auc_u)
+	# avg_opt_u = mean(opt_u)
+	# avg_nosell_u = mean(nosell_u)
 
-	success_means = (mean(nosell_total_success), mean(greedy_total_success), mean(iter_total_success), mean(opt_total_success))
-	success_std = (stdev(nosell_total_success), stdev(greedy_total_success), stdev(iter_total_success), stdev(opt_total_success))
-	fail_means = (mean(nosell_total_fail), mean(greedy_total_fail), mean(iter_total_fail), mean(opt_total_fail))
-	fail_std = (stdev(nosell_total_fail), stdev(greedy_total_fail), stdev(iter_total_fail), stdev(opt_total_fail))
+	# greedy_u_error = stdev(greedy_u)
+	# iter_u_error = stdev(iter_auc_u)
+	# opt_u_error = stdev(opt_u)
+	# nosell_u_error = stdev(nosell_u)
 
-	# the x locations for the groups
-	ind = np.arange(4)    
-	# the width of the bars
-	width = 0.55     
+	# eu_error = [nosell_u_error, greedy_u_error, iter_u_error, opt_u_error]
 
-	plt.figure(figsize=(9,6))
-	p1 = plt.bar(ind, success_means, width, yerr=success_std, color='green')
-	p2 = plt.bar(ind, fail_means, width,
-	bottom=success_means, yerr=fail_std, color='red')
+	# labels = ["No Info Exchange", "Greedy Assignment", "Iterative Auction", "Optimal Assignment"]
+	# x_pos = np.arange(len(labels))
+	# ys = [avg_nosell_u, avg_greedy_u, avg_iter_u, avg_opt_u]
+	# fig, ax = plt.subplots(figsize=(9,6))
+	# ax.bar(x_pos, ys,
+	# 	yerr=eu_error,
+	# 	align='center',
+	# 	alpha=0.5,
+	# 	ecolor='black',
+	# 	capsize=10)
+	# ax.set_ylabel('Expected Utility Across Settings')
+	# ax.set_xticks(x_pos)
+	# ax.set_xticklabels(labels)
+	# # ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
+	# ax.yaxis.grid(True)
 
-	plt.ylabel('Fail/Success Split')
-	plt.xlabel('Setting')
-	# plt.title('Scores by group\n' + 'and gender')
-	plt.xticks(ind, ('No information exchange', 'Greedy Allocation', 'Iterative Auction', 'Optimal Allocation'))
-	plt.yticks(np.arange(0, 5, 1))
-	plt.legend((p1[0], p2[0]), ('Successes', 'Failures'))
+	# # Save the figure and show
+	# plt.tight_layout()
+	# plt.savefig('eu-allsettings.png')
+	# plt.show()
 
-	plt.savefig('sfcomp.png')
-	plt.show()
+	# #Visualize Successs/Fails
 
-	#Visualize Cost for each Setting
+	# success_means = (mean(nosell_total_success), mean(greedy_total_success), mean(iter_total_success), mean(opt_total_success))
+	# success_std = (stdev(nosell_total_success), stdev(greedy_total_success), stdev(iter_total_success), stdev(opt_total_success))
+	# fail_means = (mean(nosell_total_fail), mean(greedy_total_fail), mean(iter_total_fail), mean(opt_total_fail))
+	# fail_std = (stdev(nosell_total_fail), stdev(greedy_total_fail), stdev(iter_total_fail), stdev(opt_total_fail))
 
-	avg_greedy_cost = mean(greedy_costs)
-	avg_iter_auc_cost = mean(iter_auc_costs)
-	avg_opt_cost = mean(opt_costs)
-	avg_nosell_cost = mean(nosell_costs)
+	# # the x locations for the groups
+	# ind = np.arange(4)    
+	# # the width of the bars
+	# width = 0.55     
 
-	greedy_cost_error = stdev(greedy_costs)
-	iter_cost_error = stdev(iter_auc_costs)
-	opt_cost_error = stdev(opt_costs)
-	nosell_cost_error = stdev(nosell_costs)
+	# plt.figure(figsize=(9,6))
+	# p1 = plt.bar(ind, success_means, width, yerr=success_std, color='green')
+	# p2 = plt.bar(ind, fail_means, width,
+	# bottom=success_means, yerr=fail_std, color='red')
 
-	eu_error = [nosell_cost_error, greedy_cost_error, iter_cost_error, opt_cost_error]
+	# plt.ylabel('Fail/Success Split')
+	# plt.xlabel('Setting')
+	# # plt.title('Scores by group\n' + 'and gender')
+	# plt.xticks(ind, ('No information exchange', 'Greedy Allocation', 'Iterative Auction', 'Optimal Allocation'))
+	# plt.yticks(np.arange(0, 5, 1))
+	# plt.legend((p1[0], p2[0]), ('Successes', 'Failures'))
 
-	labels = ["No Info Exchange", "Greedy Assignment", "Iterative Auction", "Optimal Assignment"]
-	x_pos = np.arange(len(labels))
-	ys = [avg_nosell_cost, avg_greedy_cost, avg_iter_auc_cost, avg_opt_cost]
-	fig, ax = plt.subplots(figsize=(9,6))
-	ax.bar(x_pos, ys,
-		yerr=eu_error,
-		align='center',
-		alpha=0.5,
-		ecolor='black',
-		capsize=10)
-	ax.set_ylabel('Cost Across Settings')
-	ax.set_xticks(x_pos)
-	ax.set_xticklabels(labels)
-	# ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
-	ax.yaxis.grid(True)
+	# plt.savefig('sfcomp.png')
+	# plt.show()
 
-	# Save the figure and show
-	plt.tight_layout()
-	plt.savefig('cost-allsettings.png')
-	plt.show()
+	# #Visualize Cost for each Setting
+
+	# avg_greedy_cost = mean(greedy_costs)
+	# avg_iter_auc_cost = mean(iter_auc_costs)
+	# avg_opt_cost = mean(opt_costs)
+	# avg_nosell_cost = mean(nosell_costs)
+
+	# greedy_cost_error = stdev(greedy_costs)
+	# iter_cost_error = stdev(iter_auc_costs)
+	# opt_cost_error = stdev(opt_costs)
+	# nosell_cost_error = stdev(nosell_costs)
+
+	# eu_error = [nosell_cost_error, greedy_cost_error, iter_cost_error, opt_cost_error]
+
+	# labels = ["No Info Exchange", "Greedy Assignment", "Iterative Auction", "Optimal Assignment"]
+	# x_pos = np.arange(len(labels))
+	# ys = [avg_nosell_cost, avg_greedy_cost, avg_iter_auc_cost, avg_opt_cost]
+	# fig, ax = plt.subplots(figsize=(9,6))
+	# ax.bar(x_pos, ys,
+	# 	yerr=eu_error,
+	# 	align='center',
+	# 	alpha=0.5,
+	# 	ecolor='black',
+	# 	capsize=10)
+	# ax.set_ylabel('Cost Across Settings')
+	# ax.set_xticks(x_pos)
+	# ax.set_xticklabels(labels)
+	# # ax.set_title('Coefficent of Thermal Expansion (CTE) of Three Metals')
+	# ax.yaxis.grid(True)
+
+	# # Save the figure and show
+	# plt.tight_layout()
+	# plt.savefig('cost-allsettings.png')
+	# plt.show()
 
 
 	# data = {"Cat": ["Iter Auction vs No Exchange", "Optimal vs No Exchange"], 
@@ -508,8 +583,9 @@ def runSims(assignonly=False,drone=False):
 	
 
 if __name__ == "__main__":
-	# runSims(assignonly=True,drone=False)
-	runSims(assignonly=True,drone=True)
+	np.random.seed(3)
+	runSims(assignonly=False,drone=False)
+	# runSims(assignonly=False,drone=True)
 
 
 	# Example 1

@@ -33,6 +33,12 @@ class EnvGenerator:
                 self.agents.append((r, c))
             else:
                 self.dests.append((r, c))
+        self.free = (self.free*self.rows*self.cols - self.num_agents*2)/(self.rows*self.cols - self.num_agents*2)
+        self.unknown = self.unknown*self.rows*self.cols/(self.rows*self.cols - self.num_agents*2)
+        self.blocked = self.blocked*self.rows*self.cols/(self.rows*self.cols - self.num_agents*2)
+        # print(self.free)
+        # print(self.unknown)
+        # print(self.blocked)
         grid = np.random.choice([0,0.5,1], (self.rows, self.cols), p=[self.free, self.unknown, self.blocked])
         
         for i in range(self.num_agents):

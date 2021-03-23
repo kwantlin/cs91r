@@ -286,7 +286,7 @@ class Greedy:
 				prob *= grid[p[0]][p[1]]
 				grid[p[0]][p[1]] = 1
 			
-			path, utility, prob,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
+			path, utility,_,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
 			if utility is None:
 				utility = 0
 			# print("Path w/ Info", c, path)
@@ -480,6 +480,19 @@ class Greedy:
 			if not found:
 				break
 		
+	def getSurplus(self):
+		surplus = 0
+		waypt_set = set()
+		# print(waypt_set)
+		for a in self.assignments:
+			w = self.assignments[a][0]
+			waypt_set.add(w)
+			surplus -= self.costs[w][a]
+		waypt_set = list(waypt_set)
+		# print(waypt_set)
+		for b in self.buyers:
+			surplus += self.bundleValue(b, waypt_set)
+		self.surplus = surplus
 
 	def run(self, drone=False):
 		self.getAllPaths()
@@ -497,6 +510,8 @@ class Greedy:
 		# print("Waypoints: ", self.waypoints)
 		self.greedy_assign(drone)
 		# print("Assignments: ", self.assignments)
+		self.getSurplus()
+		# print(self.surplus)
 		end = time.time()
 		self.assign_time = end-start
 		# print("Elapsed time: ", end-start)

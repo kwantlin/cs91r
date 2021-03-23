@@ -30,7 +30,6 @@ class IterativeAuction:
 		self.waypt_prices = {}
 		self.paths = defaultdict(list)
 		self.utilities = []
-		self.surplus = []
 		self.assignments = defaultdict(list) # agent start pos: waypoint assigned
 		self.sellers = sellers
 		self.buyers = buyers
@@ -286,7 +285,7 @@ class IterativeAuction:
 				prob *= grid[p[0]][p[1]]
 				grid[p[0]][p[1]] = 1
 			
-			path, utility, prob,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
+			path, utility, _,_,_ = self.dijkstra(grid, agent, self.dests[self.agents.index(agent)],self.rewards[self.agents.index(agent)])
 			if utility is None:
 				utility = 0
 			# print("Path w/ Info", c, path)
@@ -297,7 +296,7 @@ class IterativeAuction:
 				base_u = self.base_path_util_winfo(grid, base_path, self.rewards[self.agents.index(agent)])
 			# print("Utility w/ Info", utility)
 			# print("Base Path U under info", base_u)
-
+			# print("Prob", prob)
 			total_value += prob * (utility - base_u)
 		return total_value
 
@@ -437,11 +436,10 @@ class IterativeAuction:
 
 	def iterative_market(self, eta, drone):
 		# print("Prices", self.waypt_prices)
-		old_surplus = None
 		if self.waypoints == []:
 			return 
 		iterations = 0
-		
+		self.surplus = [0]
 		prev_prices = []
 		prov_alloc = []
 		while True:
@@ -458,6 +456,9 @@ class IterativeAuction:
 			excess_supply = list((Counter(supply) - Counter(intersect)).elements())
 			# print("Intersect", intersect)
 			surplus_pts = excess_demand + excess_supply
+			# Remove duplicate assignments from consideration
+			temp = {val[0] : key for key, val in new_assignments.items()} 
+			new_assignments = {val : [key] for key, val in temp.items()} 
 			total_cost = 0
 			keys = list(new_assignments.keys())
 			for h in keys:
@@ -468,32 +469,27 @@ class IterativeAuction:
 			# print("New assignment", new_assignments)
 			# print("Excess Demand", excess_demand)
 			# print("Excess Supply", excess_supply)
+			# print("New Assignments", new_assignments)
 			surplus_value = 0
-			for p in intersect:
-				surplus_value += self.values[p]
-			# print("Total value", surplus_value)
-			# print("Total Cost", total_cost)
+			for b in self.buyers:
+				surplus_value += self.bundleValue(b, intersect)
+			
 			surplus_value -= total_cost
 			self.surplus.append(surplus_value) #TODO: graph this
-			# if surplus_value == 0:
-			# 	break
-			# print("Surplus Value", surplus_value)
-			# print("New Assignments", new_assignments)
-			
 			#update prices
 			for p in surplus_pts:
 				if p in excess_supply:
-					newprice = self.waypt_prices[p] - (eta*excess_supply.count(p))
+					newprice = self.waypt_prices[p] - eta
 					if newprice != self.waypt_prices[p]:
 						self.waypt_prices[p] = newprice
 				elif p in excess_demand:
-					newprice = self.waypt_prices[p] + (eta*excess_demand.count(p))
+					newprice = self.waypt_prices[p] + eta
 					if newprice != self.waypt_prices[p]:
 						self.waypt_prices[p] = newprice
 			# print("Updated prices", self.waypt_prices)
-			if old_surplus is None or surplus_value >= old_surplus: 
-				old_surplus = surplus_value
-				self.assignments = new_assignments
+			# if old_surplus is None or surplus_value >= old_surplus: 
+			# 	old_surplus = surplus_value
+			self.assignments = new_assignments
 			if self.waypt_prices in prev_prices: #if same prices ever repeated, detect cycle and break; change price update size to be by an additive constant --> will terminate
 				# print(prev_prices)
 				# print("cycle")
@@ -501,8 +497,12 @@ class IterativeAuction:
 			prev_prices.append(self.waypt_prices.copy())
 			prov_alloc = intersect
 
-		if old_surplus is not None and old_surplus < 0:
-			self.assignments = defaultdict(list)
+		# if old_surplus is not None and old_surplus < 0:
+		# 	self.assignments = defaultdict(list)
+		# Remove duplicate values in dictionary 
+		# Using dictionary comprehension to ensure no duplicate assignments
+		temp = {val[0] : key for key, val in self.assignments.items()} 
+		self.assignments = {val : [key] for key, val in temp.items()} 
 		# print("Final Assignment", self.assignments)
 		self.iterations = iterations
 		# print("Iterations", self.iterations)
@@ -511,7 +511,7 @@ class IterativeAuction:
 		self.getAllPaths()
 		# print("Utilities:", self.utilities)
 		# for i in range(len(self.agents)):
-		# 	print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
+			# print("Agent:", self.agents[i], "Base Path:", self.paths[i], "Base Utility:", self.utilities[i])
 		if self.sellers is None:
 			self.random_buyer_seller()
 		start = time.time()
@@ -525,15 +525,15 @@ class IterativeAuction:
 		# print("Elapsed time: ", end-start)
 		return self.assignments
 
-	def visualize_surplus(self):
-		iterations = list(range(1,len(self.surplus)+1))
-		surplus = self.surplus
-		plt.plot(iterations, surplus)
-		plt.title('Surplus Over Market Execution')
-		plt.xlabel('Number of Iterations')
-		plt.ylabel('Surplus')
-		plt.savefig('Surplus.png')
-		plt.show()
+	# def visualize_surplus(self):
+	# 	iterations = list(range(1,len(self.surplus)+1))
+	# 	surplus = self.surplus
+	# 	plt.plot(iterations, surplus)
+	# 	plt.title('Surplus Over Market Execution')
+	# 	plt.xlabel('Number of Iterations')
+	# 	plt.ylabel('Surplus')
+	# 	plt.savefig('Surplus.png')
+	# 	plt.show()
 		
 
 if __name__ == "__main__":
@@ -566,7 +566,7 @@ if __name__ == "__main__":
 	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
 	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.run(True)
+	g.run(False)
 
 
 	# grid = [[0,0,0],
