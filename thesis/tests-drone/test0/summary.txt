@@ -1,0 +1,24 @@
+Average Nosell U 38.55 Stdev 23.009165938202045
+Average Greedy U 41.64 Stdev 20.52616954922755
+Average Iter Auc U 40.96 Stdev 22.2991235049925
+Average Opt U 41.73 Stdev 20.214933473883494
+Average Diff Success Greedy Nosell 0.24 Stdev 0.44988887516807974
+Average Diff Success Iter Nosell 0.16 Stdev 0.39293765408777
+Average Diff Success Opt Nosell 0.25 Stdev 0.45552167895721496
+Average Proportion Success Greedy 0.8866666666666667 Stdev 0.24375476627761097
+Average Proportion Success Iter Auc 0.8166666666666667 Stdev 0.32263992431685734
+Average Proportion Success Opt 0.8966666666666666 Stdev 0.22694476898707058
+Average Proportion Success Nosell 0.7433333333333333 Stdev 0.34525808105890277
+Average U Diff Greedy vs Nosell 3.09 stdev 9.876096026632828 Percent 0.08015564202334631
+Average U Diff Iter vs Nosell 2.41 stdev 8.963556968935576 Percent 0.06251621271076525
+Average U Diff Opt vs Nosell 3.18 stdev 9.9284104132199 Percent 0.08249027237354087
+Average Help Costs Iter Auc 1.59 stdev 1.2398680281678076
+Average Help Costs Greedy 2.88 stdev 1.838312796940156
+Average Help Costs Opt 3.01 stdev 1.7320216482189217
+Average Cost Nosell 6.2 stdev 2.9370499870214375
+Average Cost Greedy 9.11 stdev 2.8881331567836566
+Average Cost Iterauc  7.79 stdev 3.3433032718670272
+Average Cost Opt 9.27 stdev 2.6623260127151593
+Average Assign Time Greedy 0.07840665102005005 stdev 0.04929039857972833
+Average Assign Time Iter Auc 0.5633060383796692 stdev 0.7862519463785593
+Average Assign Time Opt 1.0928743743896485 stdev 3.097651700174044

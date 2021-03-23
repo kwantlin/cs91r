@@ -1,0 +1,35 @@
+Average Nosell U 62.97 Stdev 26.497743376378377
+Average Greedy U 65.78 Stdev 21.423851524443826
+Average Iter Auc U 66.23 Stdev 22.375967898482948
+Average Iter Auc Ceil U 69.14 Stdev 21.18414692188668
+Average Opt U 64.97 Stdev 21.7550435345903
+Average Diff Success Greedy Nosell 0.14 Stdev 0.7618398781896363
+Average Diff Success Iter Nosell 0.15 Stdev 0.7399324293474372
+Average Diff Success IterCeil Nosell 0.27 Stdev 0.8468175718535841
+Average Diff Success Opt Nosell 0.11 Stdev 0.7334166619323562
+Average Proportion Success Greedy 0.7625 Stdev 0.22297064625396118
+Average Proportion Success Iter Auc 0.765 Stdev 0.23521964804897322
+Average Proportion Success IterCeil Auc 0.795 Stdev 0.22298480267099421
+Average Proportion Success Opt 0.755 Stdev 0.22746961169005464
+Average Proportion Success Nosell 0.7275 Stdev 0.27545875417660126
+Average U Diff Greedy vs Nosell 2.81 stdev 18.04242755061502 Percent 0.04462442432904558
+Average U Diff Iter vs Nosell 3.26 stdev 17.61233497961992 Percent 0.051770684452914086
+Average U Diff IterCeil vs Nosell 6.17 stdev 19.863196259831035 Percent 0.09798316658726378
+Average U Diff Opt vs Nosell 2 stdev 17.340324930256315 Percent 0.03176115610608226
+Average Help Costs Iter Auc 2.75 stdev 2.3284581103634165
+Average Help Costs IterCeil Auc 3.64 stdev 2.2225656300316485
+Average Help Costs Greedy 4.44 stdev 2.913985780904418
+Average Help Costs Opt 4.85 stdev 3.0096645673697275
+Average Cost Nosell 9.78 stdev 2.830497689756551
+Average Cost Greedy 10.47 stdev 3.1828295650889067
+Average Cost Iterauc  10.27 stdev 3.116767945202598
+Average Cost IteraucCeil  10.36 stdev 3.1447246189917695
+Average Cost Opt 10.53 stdev 3.2206875481530775
+Average Assign Time Greedy 0.09089496612548828 stdev 0.05610422692594466
+Average Assign Time Iter Auc 0.6299719595909119 stdev 0.8322871279721078
+Average Assign Time Iter Auc Ceil 2.8674663305282593 stdev 1.371520907427447
+Average Assign Time Opt 3.198554151058197 stdev 6.614043210866936
+Average NumAssign Greedy 1.45 stdev 0.7159792333764037
+Average NumAssign Iter Auc 0.89 stdev 0.6012613005301035
+Average NumAssign Iter Auc Ceil 1.18 stdev 0.45792681696639004
+Average NumAssign Opt 1.59 stdev 0.739847104051734
