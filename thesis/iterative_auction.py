@@ -33,6 +33,7 @@ class IterativeAuction:
 		self.assignments = defaultdict(list) # agent start pos: waypoint assigned
 		self.sellers = sellers
 		self.buyers = buyers
+		self.surplus = [0]
 		self.iterations = 0
 
 	# A utility function to find the 
@@ -439,7 +440,6 @@ class IterativeAuction:
 		if self.waypoints == []:
 			return 
 		iterations = 0
-		self.surplus = [0]
 		prev_prices = []
 		prov_alloc = []
 		while True:

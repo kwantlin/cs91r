@@ -317,7 +317,7 @@ def runSims(assignonly=False,drone=False):
 			costdiff_iter_ceil_nosell = np.subtract(np.array(iter_auc_ceil_costs), np.array(nosell_costs))
 
 		if i % 100 == 99:
-			with open('dronesellers5000.txt', 'w') as f:
+			with open('dronesellers.txt', 'w') as f:
 				# print("Greedy U", greedy_u)
 				# print("Iter Auc U", iter_auc_u)
 				# print("Opt U", opt_u)
