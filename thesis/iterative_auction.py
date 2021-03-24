@@ -381,6 +381,18 @@ class IterativeAuction:
 			# print(dist)
 		return dist[dest[0]][dest[1]], self.getPath(parent,dest[0], dest[1], src, [])
 
+	def getWaypointCosts(self,drone):
+		self.costs = {} # for each waypoint, cost to each agent
+		for i in range(len(self.waypoints)):
+			w = self.waypoints[i]
+			self.costs[w] = {}
+			for a in range(len(self.sellers)):
+				if not drone:
+					cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
+				else:
+					cost, _ = self.waypointCostDrone(self.grid, self.sellers[a],w)
+				seller = self.sellers[a]
+				self.costs[w][seller] = cost
 
 	def random_buyer_seller(self):
 		num_sellers = random.randint(1,len(self.agents)) 
@@ -395,7 +407,6 @@ class IterativeAuction:
 		new_assignments = defaultdict(list)
 		supply = []
 		total_cost = 0
-		self.costs = {}
 		# print("Sellers", self.sellers)
 		# print("Waypoints:", self.waypoints)
 		#Get provisional best assignment for each helper agent:
@@ -405,10 +416,7 @@ class IterativeAuction:
 			best_bundle = None
 			for i in range(len(self.waypoints)):
 				w = self.waypoints[i]
-				if not drone:
-					cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
-				else:
-					cost, _ = self.waypointCostDrone(self.grid, self.sellers[a],w)
+				cost = self.costs[w][self.sellers[a]]
 				profit = self.waypt_prices[w] - cost
 				# print("Seller", self.sellers[a], "Waypoint", w, "Cost", cost, "Profit", profit)
 				if profit >= best_profit: # TODO: fix this to be profit --> compare to optimal
@@ -516,8 +524,10 @@ class IterativeAuction:
 			self.random_buyer_seller()
 		start = time.time()
 		self.getAllWaypoints()
+		self.getWaypointCosts(drone)
 		# print("Paths: ", np.array(self.paths))
 		# print("Waypoints: ", self.waypoints)
+		# print(self.costs[(0,0)][(4,2)])
 		self.iterative_market(0.5, drone)
 		# print("Assignments: ", self.assignments)
 		end = time.time()
@@ -566,7 +576,7 @@ if __name__ == "__main__":
 	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
 	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.run(False)
+	g.run(True)
 
 
 	# grid = [[0,0,0],

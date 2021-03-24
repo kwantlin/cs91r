@@ -1,0 +1,1135 @@
+Drone Sellers:
+
+Agent (0, 3)
+Path w/ Info ([], [(0, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(0, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(0, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(0, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (0, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(1, 1)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(1, 1)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(1, 1)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(1, 1)], []) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.5
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (1, 1) is 0.25
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Value of (2, 0) is 3.25
+Agent (0, 3)
+Path w/ Info ([], [(2, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 2)], []) [(1, 3), (2, 2), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(2, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(2, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (2, 2) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 4)], []) [(1, 4), (2, 4), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(2, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(2, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (2, 4) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(3, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(3, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(3, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (3, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(3, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 2)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(3, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(3, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (3, 2) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(4, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(4, 4)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(4, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(4, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (4, 4) is 0.0
+{(0, 0): {(4, 2): 4, (3, 1): 3}, (1, 1): {(4, 2): 3, (3, 1): 2}, (2, 0): {(4, 2): 2, (3, 1): 1}, (2, 2): {(4, 2): 2, (3, 1): 1}, (2, 4): {(4, 2): 2, (3, 1): 3}, (3, 0): {(4, 2): 2, (3, 1): 1}, (3, 2): {(4, 2): 1, (3, 1): 1}, (4, 4): {(4, 2): 2, (3, 1): 3}}
+Assignments Updated defaultdict(<class 'list'>, {(3, 1): [(2, 0)]})
+remaining sellers [(4, 2)]
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (0, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(0, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(0, 0)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (0, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (0, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(0, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(0, 0)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (0, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (0, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (1, 1)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(1, 1)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(1, 1)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (1, 1)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (1, 1)]) [(-1, -1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 0
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(1, 1)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(1, 1)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (1, 1)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (1, 1) is 0.625
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (2, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(2, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 2)], [(2, 0)]) [(1, 3), (2, 2), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (2, 2)], []) [(1, 3), (2, 2), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (2, 2)]) [(-1, -1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 0
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(2, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(2, 2)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info -3
+Path w/ Info ([(2, 0), (2, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (2, 2) is 0.5
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (2, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(2, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 4)], [(2, 0)]) [(1, 4), (2, 4), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (2, 4)], []) [(1, 4), (2, 4), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (2, 4)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(2, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(2, 4)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (2, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (2, 4) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (3, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(3, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 0)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (3, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (3, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(3, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(3, 0)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (3, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (3, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (3, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(3, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 2)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (3, 2)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (3, 2)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(3, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(3, 2)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (3, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (3, 2) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (4, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(4, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(4, 4)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (4, 4)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (4, 4)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(4, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(4, 4)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (4, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (4, 4) is 0.0
+{(0, 0): {(4, 2): 4, (3, 1): 3}, (1, 1): {(4, 2): 3, (3, 1): 2}, (2, 0): {(4, 2): 2, (3, 1): 1}, (2, 2): {(4, 2): 2, (3, 1): 1}, (2, 4): {(4, 2): 2, (3, 1): 3}, (3, 0): {(4, 2): 2, (3, 1): 1}, (3, 2): {(4, 2): 1, (3, 1): 1}, (4, 4): {(4, 2): 2, (3, 1): 3}}
+Assignments Updated defaultdict(<class 'list'>, {(3, 1): [(2, 0)]})
+remaining sellers [(4, 2)]
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Assignments:  defaultdict(<class 'list'>, {(3, 1): [(2, 0)]})
+
+
+
+
+All UGVS:
+Agent (0, 3)
+Path w/ Info ([], [(0, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(0, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(0, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(0, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (0, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(1, 1)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(1, 1)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(1, 1)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(1, 1)], []) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.5
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (1, 1) is 0.25
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Value of (2, 0) is 3.25
+Agent (0, 3)
+Path w/ Info ([], [(2, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 2)], []) [(1, 3), (2, 2), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(2, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(2, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (2, 2) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 4)], []) [(1, 4), (2, 4), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(2, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(2, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (2, 4) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(3, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(3, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(3, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (3, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(3, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 2)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(3, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(3, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (3, 2) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(4, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(4, 4)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Agent (4, 3)
+Path w/ Info ([], [(4, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Path w/ Info ([(4, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info 9.0
+Agent (4, 3)
+Value of (4, 4) is 0.0
+{(0, 0): {(4, 2): 6.5, (3, 1): 21.875}, (1, 1): {(4, 2): 6.0, (3, 1): 20.875}, (2, 0): {(4, 2): 0.0, (3, 1): 12.5}, (2, 2): {(4, 2): 6.0, (3, 1): 11.5}, (2, 4): {(4, 2): 7.75, (3, 1): 13.0}, (3, 0): {(4, 2): 6.25, (3, 1): 12.5}, (3, 2): {(4, 2): 5.75, (3, 1): 11.5}, (4, 4): {(4, 2): 7.75, (3, 1): 13.0}}
+Assignments Updated defaultdict(<class 'list'>, {(4, 2): [(2, 0)]})
+remaining sellers [(3, 1)]
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (0, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(0, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(0, 0)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (0, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (0, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(0, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(0, 0)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (0, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (0, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (1, 1)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(1, 1)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(1, 1)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (1, 1)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (1, 1)]) [(-1, -1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 0
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(1, 1)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(1, 1)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (1, 1)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (1, 1) is 0.625
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (2, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(2, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 2)], [(2, 0)]) [(1, 3), (2, 2), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (2, 2)], []) [(1, 3), (2, 2), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (2, 2)]) [(-1, -1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 0
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(2, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(2, 2)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 9.0
+Base Path U under info -3
+Path w/ Info ([(2, 0), (2, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (2, 2) is 0.5
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (2, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(2, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 4)], [(2, 0)]) [(1, 4), (2, 4), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (2, 4)], []) [(1, 4), (2, 4), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (2, 4)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(2, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(2, 4)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (2, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (2, 4) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (3, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(3, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 0)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (3, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (3, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(3, 0)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(3, 0)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (3, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (3, 0) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (3, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(3, 2)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(3, 2)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (3, 2)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (3, 2)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(3, 2)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(3, 2)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (3, 2)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (3, 2) is 0.0
+Agent (0, 3)
+Path w/ Info ([], [(2, 0), (4, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], [(4, 4)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(4, 4)], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0), (4, 4)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0), (4, 4)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], [(4, 4)]) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Path w/ Info ([(4, 4)], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0), (4, 4)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Value of (4, 4) is 0.0
+{(0, 0): {(4, 2): 6.5, (3, 1): 21.875}, (1, 1): {(4, 2): 6.0, (3, 1): 20.875}, (2, 0): {(4, 2): 0.0, (3, 1): 12.5}, (2, 2): {(4, 2): 6.0, (3, 1): 11.5}, (2, 4): {(4, 2): 7.75, (3, 1): 13.0}, (3, 0): {(4, 2): 6.25, (3, 1): 12.5}, (3, 2): {(4, 2): 5.75, (3, 1): 11.5}, (4, 4): {(4, 2): 7.75, (3, 1): 13.0}}
+Assignments Updated defaultdict(<class 'list'>, {(4, 2): [(2, 0)]})
+remaining sellers [(3, 1)]
+Agent (0, 3)
+Path w/ Info ([], [(2, 0)]) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Path w/ Info ([(2, 0)], []) [(1, 4), (2, 3), (3, 3)]
+Base Path [(1, 4), (2, 3), (3, 3)]
+Utility w/ Info 22.0
+Base Path U under info 22
+Agent (4, 3)
+Path w/ Info ([], [(2, 0)]) [(3, 3), (2, 2), (1, 1), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 3.5
+Base Path U under info -3
+Path w/ Info ([(2, 0)], []) [(4, 2), (3, 1), (2, 0), (1, 0)]
+Base Path [(4, 2), (3, 1), (2, 0), (1, 0)]
+Utility w/ Info 21.0
+Base Path U under info 21
+Assignments:  defaultdict(<class 'list'>, {(4, 2): [(2, 0)]})

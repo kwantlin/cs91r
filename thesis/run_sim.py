@@ -241,7 +241,7 @@ def runSims(assignonly=False,drone=False):
 
 	
 	i = 0
-	while i < 1:
+	while i < 50000:
 		print(i)
 		env = EnvGenerator(5,5,4,0.4,0.3,0.3,25)
 		env.getEnv()
@@ -251,9 +251,9 @@ def runSims(assignonly=False,drone=False):
 		# print(revealed_grid)
 		if assignonly and not sim1.assignments: #if we want to compare envs with assignments but get none move to next
 			continue
-		print(revealed_grid)
+		# print(revealed_grid)
 		if revealed_grid is not None:
-			print("here")
+			# print("here")
 			i += 1
 			opt_u.append(total_u_opt)
 			opt_costs.append(cost_opt)
@@ -345,12 +345,9 @@ def runSims(assignonly=False,drone=False):
 			costdiff_iter_nosell = np.subtract(np.array(iter_auc_costs), np.array(nosell_costs))
 			costdiff_iter_ceil_nosell = np.subtract(np.array(iter_auc_ceil_costs), np.array(nosell_costs))
 			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
-			print("Nosellu", nosell_u)
-			print(opt_num_assign)
-			print("Optu", opt_u)
 
-		if i == 0:
-			with open('test.txt', 'w') as f:
+		if i % 100 == 99:
+			with open('allsim-allugv-50k.txt', 'w') as f:
 				# print("Greedy U", greedy_u)
 				# print("Iter Auc U", iter_auc_u)
 				# print("Opt U", opt_u)
@@ -583,7 +580,7 @@ def runSims(assignonly=False,drone=False):
 	
 
 if __name__ == "__main__":
-	np.random.seed(3)
+	np.random.seed(1)
 	runSims(assignonly=False,drone=False)
 	# runSims(assignonly=False,drone=True)
 

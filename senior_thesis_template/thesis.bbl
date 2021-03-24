@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Eigen(1971)]{Eigen1971}
+Manfred Eigen.
+\newblock Selforganization of matter and the evolution of biological
+  macromolecules.
+\newblock \emph{Naturwissenschaften}, 58\penalty0 (10):\penalty0 465--523,
+  1971.
+
+\end{thebibliography}

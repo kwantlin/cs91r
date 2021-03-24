@@ -433,7 +433,7 @@ class Greedy:
 		if c == []:
 			return False
 		b_ub.append(1)
-		A_ub = [[1] * len(c)]
+		A_ub = [[1] * len(c)] # change this constraint to do one-to-one, single shot greedy assignment
 		# print(prohibited_dec_vars)
 		# print(len(c))
 		for i in range(len(prohibited_dec_vars)): #take care of sellers with infinite cost
@@ -476,7 +476,10 @@ class Greedy:
 		self.remaining_sellers = self.sellers.copy()
 		while True:
 			self.getWaypointValues(self.prov_alloc)
+			# print(self.costs)
 			found = self.assign(self.prov_alloc)
+			# print("Assignments Updated", self.assignments)
+			# print("remaining sellers", self.remaining_sellers)
 			if not found:
 				break
 		
@@ -509,8 +512,8 @@ class Greedy:
 		# print("Paths: ", np.array(self.paths))
 		# print("Waypoints: ", self.waypoints)
 		self.greedy_assign(drone)
-		# print("Assignments: ", self.assignments)
 		self.getSurplus()
+		# print("Assignments: ", self.assignments)
 		# print(self.surplus)
 		end = time.time()
 		self.assign_time = end-start
@@ -547,7 +550,7 @@ if __name__ == "__main__":
 	g= Greedy(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
 	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.run(True)
+	g.run(False)
 
 
 	# grid = [[0,0,0],

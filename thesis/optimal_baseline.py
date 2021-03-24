@@ -471,7 +471,7 @@ if __name__ == "__main__":
 	g = OptimalBaseline(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
 	# print(g.agents[2])
 	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.run()
+	g.run(False)
 
 	# grid = [[0,0,0],
 	# 		[0,0.5,0],
