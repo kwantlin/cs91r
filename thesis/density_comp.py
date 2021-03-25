@@ -40,22 +40,29 @@ for i in range(1000):
 			env = EnvGenerator(5,5,num_buyers,0.4,0.3,0.3,25)
 			env.getEnv()
 			sellers, buyers = add_sellers(env, num_sellers)
+			print(sellers, buyers)
 			greedy = Greedy(env, sellers, buyers)
 			sim1 = Simulation(greedy, drone=True)
 			revealed_grid, cost_greedy, total_u_greedy = sim1.move_until_fail()
+			print(sim1.helpers, sim1.nonhelpers)
+			print("Greedy success", sim1.total_success)
+			print("Greedy cost", cost_greedy)
 
 			sellers = []
 			nosell = IterativeAuction(env, sellers, buyers) #using this method's dijkstra, with no helper agents/sellers
 			sim2 = Simulation(nosell, revealed_grid, drone=True)
 			_, cost_nosell, total_u_nosell = sim2.move_until_fail()
 			res[num_buyers-1][num_sellers][i] = total_u_greedy - total_u_nosell
+			print("Nosell success", sim2.total_success)
+			print("Nosell cost", cost_nosell)
+			print(total_u_greedy - total_u_nosell)
 
 	z = np.zeros((5,10,1))
 	res = np.append(res, z, axis=2)
-	# print(res)
+	print(res)
 	if i % 10 ==9:
 		mat = np.mean(res, axis=2)
-		with open('heatmap-greedy-100runs.txt', 'w') as f:
+		with open('heatmap-greedy-1000runs.txt', 'w') as f:
 			print("Iterations", i, file=f)
 			print(mat, file=f)
 
@@ -65,6 +72,6 @@ sns.heatmap(mat, yticklabels=list(range(5, 0, -1)))
 plt.title("Expected Surplus Heatmap")
 plt.ylabel("Num Buyers")
 plt.xlabel("Num Sellers")
-plt.savefig("heatmap.png")
+plt.savefig("heatmap-1000runs.png")
 
 	

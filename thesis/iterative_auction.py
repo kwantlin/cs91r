@@ -494,7 +494,7 @@ class IterativeAuction:
 					newprice = self.waypt_prices[p] + eta
 					if newprice != self.waypt_prices[p]:
 						self.waypt_prices[p] = newprice
-			print("Updated prices", self.waypt_prices)
+			# print("Updated prices", self.waypt_prices)
 			# if old_surplus is None or surplus_value >= old_surplus: 
 			# 	old_surplus = surplus_value
 			self.assignments = new_assignments

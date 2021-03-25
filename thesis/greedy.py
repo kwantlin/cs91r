@@ -407,8 +407,10 @@ class Greedy:
 			self.costs[w] = {}
 			for a in range(len(self.sellers)):
 				if not drone:
+					# print("Nondrone")
 					cost, _ = self.waypointCost(self.grid,self.sellers[a],self.dests[self.agents.index(self.sellers[a])],[w],self.rewards[self.agents.index(self.sellers[a])],self.utilities[self.agents.index(self.sellers[a])])
 				else:
+					# print("Drone")
 					cost, _ = self.waypointCostDrone(self.grid, self.sellers[a],w)
 				seller = self.sellers[a]
 				self.costs[w][seller] = cost

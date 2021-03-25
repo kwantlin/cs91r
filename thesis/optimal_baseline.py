@@ -392,7 +392,7 @@ class OptimalBaseline:
 		nums = list(range(len(self.waypoints))) + [-1]
 		combs = list(itertools.product(nums, repeat=len(self.sellers)))
 		# print("Combs", combs)
-		best_profit = -float("Inf")
+		best_profit = 0
 		best_assignment = None
 		for c in combs:
 			perms = list(itertools.permutations(c))
@@ -421,12 +421,13 @@ class OptimalBaseline:
 					best_profit = profit
 					best_assignment = p
 		self.assignments = defaultdict(list)
-		for i in range(len(best_assignment)):
-			w_index = best_assignment[i]
-			if w_index != -1:
-				w = self.waypoints[w_index]
-				self.assignments[self.sellers[i]] = [w] # note - designed for singleton case
-		self.surplus = best_profit
+		if best_assignment:
+			for i in range(len(best_assignment)):
+				w_index = best_assignment[i]
+				if w_index != -1:
+					w = self.waypoints[w_index]
+					self.assignments[self.sellers[i]] = [w] # note - designed for singleton case
+		self.surplus = max(best_profit, 0)
 		# print("Best Profit", best_profit)
 		#TODO: ensure the costs, etc. reported match what iterauc gives
 

@@ -107,6 +107,7 @@ class Simulation:
 							else:
 								grid[p[0]][p[1]] = np.random.choice([0,1], p=[1-grid[p[0]][p[1]], grid[p[0]][p[1]]])
 						if grid[p[0]][p[1]] == 1 and not self.drone:
+							# print("fail here")
 							total_fail += 1
 							# print(str(p) + " is blocked.")
 							del self.helper_paths[a]
@@ -156,8 +157,10 @@ class Simulation:
 		total_success = 0
 		for a in agents_pos_updates:
 			if agents_pos_updates[a] == self.planner.dests[self.agents.index(a)]:
-				total_success += 1
-				total_u += self.planner.rewards[self.agents.index(a)]
+				if not self.drone or (self.drone and a in self.nonhelpers):
+					total_success += 1
+					total_u += self.planner.rewards[self.agents.index(a)]
+
 		total_u -= cost
 		# print("Total Utility:", total_u)
 		self.help_cost = help_cost
@@ -241,7 +244,7 @@ def runSims(assignonly=False,drone=False):
 
 	
 	i = 0
-	while i < 5000:
+	while i < 10000:
 		print(i)
 		env = EnvGenerator(5,5,4,0.4,0.3,0.3,25)
 		env.getEnv()
@@ -347,7 +350,7 @@ def runSims(assignonly=False,drone=False):
 			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
 
 		if i % 100 == 99:
-			with open('alpha0.8-allsim-dronesellers-5kruns.txt', 'w') as f:
+			with open('allsim-dronesellers-10k.txt', 'w') as f:
 				# print("Greedy U", greedy_u)
 				# print("Iter Auc U", iter_auc_u)
 				# print("Opt U", opt_u)
