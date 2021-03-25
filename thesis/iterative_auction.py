@@ -494,7 +494,7 @@ class IterativeAuction:
 					newprice = self.waypt_prices[p] + eta
 					if newprice != self.waypt_prices[p]:
 						self.waypt_prices[p] = newprice
-			# print("Updated prices", self.waypt_prices)
+			print("Updated prices", self.waypt_prices)
 			# if old_surplus is None or surplus_value >= old_surplus: 
 			# 	old_surplus = surplus_value
 			self.assignments = new_assignments
@@ -528,7 +528,8 @@ class IterativeAuction:
 		# print("Paths: ", np.array(self.paths))
 		# print("Waypoints: ", self.waypoints)
 		# print(self.costs[(0,0)][(4,2)])
-		self.iterative_market(0.5, drone)
+		if len(self.sellers) > 0:
+			self.iterative_market(0.5, drone)
 		# print("Assignments: ", self.assignments)
 		end = time.time()
 		self.assign_time = end-start

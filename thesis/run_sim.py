@@ -241,7 +241,7 @@ def runSims(assignonly=False,drone=False):
 
 	
 	i = 0
-	while i < 50000:
+	while i < 5000:
 		print(i)
 		env = EnvGenerator(5,5,4,0.4,0.3,0.3,25)
 		env.getEnv()
@@ -347,7 +347,7 @@ def runSims(assignonly=False,drone=False):
 			costdiff_opt_nosell = np.subtract(np.array(opt_costs), np.array(nosell_costs))
 
 		if i % 100 == 99:
-			with open('allsim-allugv-50k.txt', 'w') as f:
+			with open('alpha0.8-allsim-dronesellers-5kruns.txt', 'w') as f:
 				# print("Greedy U", greedy_u)
 				# print("Iter Auc U", iter_auc_u)
 				# print("Opt U", opt_u)
@@ -581,8 +581,8 @@ def runSims(assignonly=False,drone=False):
 
 if __name__ == "__main__":
 	np.random.seed(1)
-	runSims(assignonly=False,drone=False)
-	# runSims(assignonly=False,drone=True)
+	# runSims(assignonly=False,drone=False)
+	runSims(assignonly=False,drone=True)
 
 
 	# Example 1
