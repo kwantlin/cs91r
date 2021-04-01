@@ -169,7 +169,7 @@ class IterativeAuction:
 			# still in queue 
 			u = self.maxDistance(dist,queue) 
 			# print(queue)
-			# print(u)
+			print(u)
 			# remove min element	 
 			queue.remove(u) 
 
@@ -207,8 +207,8 @@ class IterativeAuction:
 					parent[p[0]][p[1]] = u 
 					queue.append(p)
 
-			# print(*dist, sep="\n")
-			# print()
+			print(*dist, sep="\n")
+			print()
 		# print the constructed distance array 
 		# print(*dist, sep="\n")
 		# print()
@@ -567,17 +567,32 @@ if __name__ == "__main__":
 	# g.iterate()
 
 	# Presentation Example
-	grid = [[0.5, 0.,  1.,  0.,  0. ],
-			[0.,  0.5, 1.,  0.,  0. ],
-			[0.5, 1.,  0.5, 0.,  0.5],
-			[0.5, 0.,  0.5, 0.,  0. ],
-			[1.,  0.,  0.,  0.,  0.5]]
+	# grid = [[0.5, 0.,  1.,  0.,  0. ],
+	# 		[0.,  0.5, 1.,  0.,  0. ],
+	# 		[0.5, 1.,  0.5, 0.,  0.5],
+	# 		[0.5, 0.,  0.5, 0.,  0. ],
+	# 		[1.,  0.,  0.,  0.,  0.5]]
 
-	env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (3, 3)], [25, 25, 25, 25])
-	g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	# env = EnvGenerator(5,5,4,0.6,0.2,0.2,10,np.array(grid),[(3, 1), (4, 2), (4, 3), (0, 3)], [(3, 4), (0, 1), (1, 0), (3, 3)], [25, 25, 25, 25])
+	# g= IterativeAuction(env, [(4, 2), (3, 1)], [(0, 3), (4, 3)]) 
+	# # print(g.agents[2])
+	# # print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
+	# g.run(True)
+
+	grid = [[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 1, 1, 1, 1, 1],
+			[0, 1, 1, 0, 1, 1, 1, 1],
+			[0, 1, 1, 1, 0, 1, 0, 0],
+			[0, 1, 1, 1, 1, 0.9, 0, 0],
+			[0, 0.5, 0, 0.9, 0, 0, 0, 0]]
+
+	env = EnvGenerator(8,8,4,0.6,0.2,0.2,10,np.array(grid),[(7, 0)], [(7, 4)], [100])
+	g= IterativeAuction(env) 
 	# print(g.agents[2])
-	# print(g.dijkstra(g.grid,(1,1),(0,1),25, 0.25, 1.75, 3))
-	g.run(True)
+	print(g.dijkstra(g.grid,(7,0),(7,4),100))
+	# g.run(True)
 
 
 	# grid = [[0,0,0],
