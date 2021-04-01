@@ -207,8 +207,8 @@ class IterativeAuction:
 					parent[p[0]][p[1]] = u 
 					queue.append(p)
 
-			print(*dist, sep="\n")
-			print()
+			# print(*dist, sep="\n")
+			# print()
 		# print the constructed distance array 
 		# print(*dist, sep="\n")
 		# print()
